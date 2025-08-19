@@ -29,11 +29,9 @@ class LoginController extends Controller
     public function store(LoginRequest $request)
     {
         try {
-
-            $email = (empty($request->input("email"))) ? null : trim(htmlentities($request->input("email")));
-            $password = (empty($request->input("password"))) ? null : trim(htmlentities($request->input("password")));
-
-            $rememberme = (empty($request->input('rememberme'))) ? false : true;
+            $email = $request->input("email") ? trim($request->input("email")) : null;
+            $password = $request->input("password") ? trim($request->input("password")) : null;
+            $rememberme = $request->filled('rememberme');
 
             $field = [
                 'email' => $email,
@@ -43,7 +41,6 @@ class LoginController extends Controller
             if (Auth::attempt($field, $rememberme)) {
                 $user = Auth::user();
 
-                // Cek apakah user memiliki salah satu role yang diizinkan
                 if (!$user->hasRole([
                     RoleEnum::SUPERADMIN,
                     RoleEnum::ADMINISTRATOR,
@@ -51,21 +48,29 @@ class LoginController extends Controller
                     RoleEnum::STUDENT,
                 ])) {
                     Auth::logout();
-                    throw new Error("Anda tidak diperbolehkan mengakses menu ini");
+                    throw new \Exception("Anda tidak diperbolehkan mengakses menu ini");
                 }
 
-                alert()->html('Berhasil', 'Login berhasil', 'success');
-                return redirect()->intended(route('dashboard.index'));
-
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Login berhasil',
+                    'data' => [
+                        'redirect' => route('dashboard.index')
+                    ]
+                ]);
             } else {
-                throw new \Exception("Username atau password salah");
+                throw new \Exception("Email atau password salah");
             }
-        } catch (\Throwable $e) {
-            Log::emergency($e->getMessage());
 
-            alert()->html('Gagal',$e->getMessage(),'error');
-            return redirect()->back()->withInput();
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'status' => 422,
+                'message' => $e->getMessage()
+            ], 422);
         }
     }
+
 
 }

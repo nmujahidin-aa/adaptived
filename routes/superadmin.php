@@ -2,8 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Helpers\RouteHelper;
-use App\Http\Controllers\Teacher\AssesmentController;
-use App\Http\Controllers\Teacher\QuestionController;
+use App\Http\Controllers\Superadmin\StudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,9 +23,5 @@ use App\Http\Controllers\Teacher\QuestionController;
 
 
 Route::group(["middleware"=>"auth"], function(){
-    RouteHelper::make('assesment', AssesmentController::class, 'assesment');
-
-    Route::group(['prefix' => 'assesment/{variable_id}', 'as' => 'assesment.'], function () {
-        RouteHelper::make('question', QuestionController::class, 'question');
-    });
+    RouteHelper::make('student', StudentController::class, 'student');
 });

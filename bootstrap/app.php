@@ -16,10 +16,22 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/auth.php'));
 
             Route::middleware(['web', 'auth'])
+                ->namespace('App\\Http\\Controllers\\Superadmin')
+                ->prefix('superadmin')
+                ->as('superadmin.')
+                ->group(base_path('routes/superadmin.php'));
+
+            Route::middleware(['web', 'auth'])
                 ->namespace('App\\Http\\Controllers\\Admin')
                 ->prefix('admin')
                 ->as('admin.')
                 ->group(base_path('routes/admin.php'));
+
+            Route::middleware(['web', 'auth'])
+                ->namespace('App\\Http\\Controllers\\Teacher')
+                ->prefix('teacher')
+                ->as('teacher.')
+                ->group(base_path('routes/teacher.php'));
         }
     )
     ->withMiddleware(function ($middleware) {

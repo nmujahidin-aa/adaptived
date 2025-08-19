@@ -220,7 +220,7 @@
                 <div class="w-100 content-space-t-1 content-space-t-lg-1 content-space-b-1" style="max-width: 25rem;">
                     <div class="reveal reveal-right">
                         <div class="text-center">
-                            <img class="shimmer" src="/assets/img/logos/auth_logo_default.png" alt="Fakultas Vokasi" width="100%" loading="lazy" style="max-width: 80%;">
+                            {{-- <img class="shimmer" src="/assets/img/logos/auth_logo_default.png" alt="Fakultas Vokasi" width="100%" loading="lazy" style="max-width: 80%;"> --}}
                         </div>
                         <div class="auth-content">
                             <div class="container-fluid">
@@ -253,6 +253,7 @@
 <script src="/assets/js/form-handler.js"></script>
 <script src="/assets/vendor/sweetalert/sweetalert2.min.js"></script>
 <script src="/assets/vendor/sweetalert/custom.js"></script>
+
 <script>
     (function() {
         window.onload = function () {

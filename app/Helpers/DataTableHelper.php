@@ -170,7 +170,9 @@ class DataTableHelper
 
                         // enable tooltip
                         const tooltipTriggerList = document.querySelectorAll('[dt-tooltip="true"][data-bs-toggle="tooltip"]')
-                        [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+                        Array.from(tooltipTriggerList).forEach(function(tooltipTriggerEl) {
+                            new bootstrap.Tooltip(tooltipTriggerEl)
+                        })
 
                         function addDataTableImgTimeout(img) {
                             var timer;
@@ -433,6 +435,28 @@ class DataTableHelper
               <button type="button" class="btn btn-white btn-icon btn-sm dropdown-toggle dropdown-toggle-empty" id="tableEditDropdown" data-bs-toggle="dropdown" aria-expanded="false"></button>
               <div class="dropdown-menu dropdown-menu-end mt-1" aria-labelledby="tableEditDropdown">
                 <button class="dropdown-item" onclick="triggerDeleteFromTable(this)" data-endpoint="{$delete_route}">
+                  <i class="bi-trash dropdown-item-icon"></i> Hapus
+                </button>
+              </div>
+            </div>
+        HTML;
+    }
+
+    public static function actionButtonAssesment(object $row, string $add_questions_route, string $edit_route, string $delete_route) : string {
+        return <<<HTML
+            <div class="btn-group" role="group">
+            <a class="btn btn-white btn-sm" href="{$add_questions_route}">
+              <i class="bi-plus-square-fill me-1"></i> Tambah Soal
+            </a>
+
+            <!-- Button Group -->
+            <div class="btn-group">
+              <button type="button" class="btn btn-white btn-icon btn-sm dropdown-toggle dropdown-toggle-empty" id="tableEditDropdown" data-bs-toggle="dropdown" aria-expanded="false"></button>
+              <div class="dropdown-menu dropdown-menu-end mt-1" aria-labelledby="tableEditDropdown">
+              <a class="dropdown-item" href="{$edit_route}">
+                <i class="bi-pencil-fill dropdown-item-icon"></i> Ubah
+              </a>  
+              <button class="dropdown-item" onclick="triggerDeleteFromTable(this)" data-endpoint="{$delete_route}">
                   <i class="bi-trash dropdown-item-icon"></i> Hapus
                 </button>
               </div>

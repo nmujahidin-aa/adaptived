@@ -58,13 +58,13 @@
 @endsection
 
 @section('scripts')
-
     <script>
         addSubmitFormHandler('#formLogin', function(response) {
             if (response.status === 200) {
                 window.location.href = response.data.data.redirect;
+            } else {
+                alert(response.data.message);
             }
         });
     </script>
-
 @endsection

@@ -129,14 +129,14 @@
     <div class="container">
       <nav class="js-mega-menu navbar-nav-wrap">
         <a class="navbar-brand me-sm-5" href="/" aria-label="Fakultas Vokasi">
-          <img class="shimmer d-block d-sm-none" src="{{ URL::to('/') }}/assets/img/logos/akun-vokasi.svg" alt="FV"
+          <img class="shimmer d-block d-sm-none" src="{{ URL::to('/') }}/assets/img/backgrounds/icon.png" alt="FV"
             data-hs-theme-appearance="default" loading="lazy" width="100px">
-          <img class="shimmer d-none d-sm-block" src="{{ URL::to('/') }}/assets/img/logos/akun-vokasi.svg"
-            alt="Fakultas Vokasi" data-hs-theme-appearance="default" loading="lazy" width="120px">
+          <img class="shimmer d-none d-sm-block" src="{{ URL::to('/') }}/assets/img/backgrounds/icon.png"
+            alt="Fakultas Vokasi" data-hs-theme-appearance="default" loading="lazy" width="50px">
         </a>
         <div class="navbar-nav-wrap-secondary-content">
           <ul class="navbar-nav">
-            <li class="nav-item">
+            {{-- <li class="nav-item">
               @if (\App\Helpers\UserHelper::hasAdminRole())
                 <div class="tom-select-custom tom-select-custom-end d-none d-sm-block">
                   <select id="roleSwitcher" class="js-select form-select"
@@ -154,7 +154,7 @@
                   </select>
                 </div>
               @endif
-            </li>
+            </li> --}}
             <li class="nav-item">
               <div class="dropdown">
                 <button type="button" class="btn btn-icon btn-ghost-secondary rounded-circle" id="navbarAppsDropdown"
@@ -182,32 +182,18 @@
                                 </div>
                             </div>
                         </a>
-                        @foreach(\App\Models\AuthApplication::where('show', true)->get() as $app)
-                            <a class="dropdown-item" href="{{ $app->url }}" target="_blank">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <img class="avatar avatar-xs avatar-4x3"
-                                             src="{{ $app->iconURL() }}" alt="Logo">
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-3">
-                                        <h5 class="mb-0">{{ $app->name }}</h5>
-                                        <p class="card-text text-body">{{ $app->description }}</p>
-                                    </div>
-                                </div>
-                            </a>
-                        @endforeach
                     </div>
                   </div>
                 </div>
               </div>
             </li>
-              @if(\App\Helpers\UserHelper::getAuthUser() != null)
+              @if(auth()->user() != null)
                   <li class="nav-item">
                       <!-- Account -->
                       <div class="dropdown">
                           <a class="navbar-dropdown-account-wrapper" href="javascript:;" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation>
                               <div class="avatar avatar-sm avatar-circle">
-                                  <img class="avatar-img" src="{{ \App\Helpers\UserHelper::getAuthUser()->getPhoto() }}" alt="Photo">
+                                  <img class="avatar-img" src="#" alt="Photo">
                                   <span class="avatar-status avatar-sm-status avatar-status-success"></span>
                               </div>
                           </a>
@@ -216,27 +202,21 @@
                               <div class="dropdown-item-text">
                                   <div class="d-flex align-items-center">
                                       <div class="avatar avatar-sm avatar-circle">
-                                          <img class="avatar-img" src="{{ \App\Helpers\UserHelper::getAuthUser()->getPhoto() }}" alt="Photo">
+                                          <img class="avatar-img" src="#" alt="Photo">
                                       </div>
                                       <div class="flex-grow-1 ms-3">
-                                          <h5 class="mb-0">{{ \App\Helpers\UserHelper::getAuthUser()->name }}</h5>
-                                          <p class="card-text text-body">{{ \App\Helpers\UserHelper::getAuthUser()->getIDString() }}</p>
+                                          <h5 class="mb-0">{{ Auth::user()->name }}</h5>
+                                          <p class="card-text text-body">{{ Auth::user()->email }}</p>
                                       </div>
                                   </div>
                               </div>
                               <div class="dropdown-divider"></div>
-                              @if(\App\Helpers\UserHelper::hasAdminRole())
-                                  <a class="dropdown-item" href="{{ route('auth.login.switch', ['role' => \App\Helpers\UserHelper::isAdmin() ? 'lecturer' : 'admin']) }}">
-                                      <i class="bi-lock me-2"></i>
-                                      {{ !\App\Helpers\UserHelper::isAdmin() ? 'Masuk ke mode ADMIN' : 'Keluar dari mode ADMIN' }}
-                                  </a>
-                              @endif
-                              <a class="dropdown-item" href="{{ route('reset-password.index') }}">
+                              <a class="dropdown-item" href="#">
                                   <i class="bi-key me-2"></i>
                                   Ubah Kata Sandi
                               </a>
                               <div class="dropdown-divider"></div>
-                              <a class="dropdown-item" href="{{ route('auth.logout') }}">
+                              <a class="dropdown-item" href="{{route('auth.logout')}}">
                                   <i class="bi-door-open me-2"></i>
                                   Keluar
                               </a>
@@ -258,11 +238,20 @@
           </span>
         </button>
         <div class="collapse navbar-collapse" id="navbarContainerNavDropdown">
-          <ul class="navbar-nav">
-            @if (\App\Helpers\UserHelper::isAdmin())
+          <ul class="navbar-nav justify-content-center mx-auto">
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('dashboard.index')) active @endif" href="{{ route('dashboard.index') }}">
+                    <i class="bi-house-door-fill dropdown-item-icon"></i> Dashboard
+                </a>
+            </li>
+            @if (Auth::user()->hasRole('SUPERADMIN'))
+              @include('menu.superadmin')
+            @elseif (Auth::user()->hasRole('ADMINISTRATOR'))
               @include('menu.admin')
-            @else
-              @include('menu.profile')
+            @elseif (Auth::user()->hasRole('TEACHER'))
+              @include('menu.teacher')
+            @elseif (Auth::user()->hasRole('STUDENTS'))
+              @include('menu.students')
             @endif
           </ul>
         </div>
@@ -276,8 +265,8 @@
           <div class="container pt-3">
               <div class="row justify-content-between align-items-center">
                   <div class="col">
-                      <p class="fs-6 mb-0">&copy; 2023 - {{ date('Y') }} <span class="d-inline-block d-sm-none">FV UM</span> <span
-                              class="d-none d-sm-inline-block">Fakultas Vokasi Universitas Negeri Malang</span></p>
+                      <p class="fs-6 mb-0">&copy; 2025 - {{ date('Y') }} <span class="d-inline-block d-sm-none">FV UM</span> <span
+                              class="d-none d-sm-inline-block">Adaptived - Universitas Negeri Malang</span></p>
                   </div>
                   <div class="col-auto">
                       <div id="page_load_time" class="fs-6 mb-0 text-muted">
@@ -433,15 +422,6 @@
           position: 'left'
         }
       });
-      @if (\App\Helpers\UserHelper::hasAdminRole())
-        $('#roleSwitcher').change(function() {
-          @if (\App\Helpers\UserHelper::isAdmin())
-            window.location.href = '{{ route('auth.login.switch', ['role' => 'lecturer']) }}';
-          @else
-            window.location.href = '{{ route('auth.login.switch', ['role' => 'admin']) }}';
-          @endif
-        });
-      @endif
     })()
   </script>
 
