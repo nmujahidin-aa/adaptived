@@ -14,13 +14,6 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         Role::firstOrCreate([
-            'name' => 'SUPERADMIN',
-        ],[
-            'name' => 'SUPERADMIN',
-            'guard_name' => 'web'
-        ]);
-
-        Role::firstOrCreate([
             'name' => 'ADMINISTRATOR',
         ],[
             'name' => 'ADMINISTRATOR',
@@ -35,9 +28,9 @@ class RoleSeeder extends Seeder
         ]);
 
         Role::firstOrCreate([
-            'name' => 'STUDENTS',
+            'name' => 'STUDENT',
         ],[
-            'name' => 'STUDENTS',
+            'name' => 'STUDENT',
             'guard_name' => 'web'
         ]);
     }

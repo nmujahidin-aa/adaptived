@@ -22,12 +22,17 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/vendor/sweetalert/sweetalert2.css">
     <style data-hs-appearance-onload-styles>
-        *
-        {
-            transition: unset !important;
-        }
+    *{
+        transition: unset !important;
+    }
     body {
-      opacity: 1;
+        opacity: 1;
+    }
+    @media (max-width: 576px) {
+        .logobio {
+            max-width: 60px;
+            height: auto;
+        }
     }
   </style>
   @yield('styles')
@@ -114,6 +119,7 @@
             return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16)
         }
     </script>
+    @trixassets
 </head>
 
 <body>
@@ -129,10 +135,10 @@
     <div class="container">
       <nav class="js-mega-menu navbar-nav-wrap">
         <a class="navbar-brand me-sm-5" href="/" aria-label="Fakultas Vokasi">
-          <img class="shimmer d-block d-sm-none" src="{{ URL::to('/') }}/assets/img/backgrounds/icon.png" alt="FV"
-            data-hs-theme-appearance="default" loading="lazy" width="100px">
+          <img class="shimmer d-block d-sm-none" src="{{ URL::to('/') }}/assets/img/backgrounds/icon.png" alt="Logo"
+            data-hs-theme-appearance="default" loading="lazy" width="40px">
           <img class="shimmer d-none d-sm-block" src="{{ URL::to('/') }}/assets/img/backgrounds/icon.png"
-            alt="Fakultas Vokasi" data-hs-theme-appearance="default" loading="lazy" width="50px">
+            alt="logo" data-hs-theme-appearance="default" loading="lazy" width="50px">
         </a>
         <div class="navbar-nav-wrap-secondary-content">
           <ul class="navbar-nav">
@@ -155,38 +161,7 @@
                 </div>
               @endif
             </li> --}}
-            <li class="nav-item">
-              <div class="dropdown">
-                <button type="button" class="btn btn-icon btn-ghost-secondary rounded-circle" id="navbarAppsDropdown"
-                  data-bs-toggle="dropdown" aria-expanded="false" data-bs-dropdown-animation>
-                  <i class="bi-grid-3x3-gap-fill"></i>
-                </button>
-
-                <div
-                  class="dropdown-menu dropdown-menu-end dropdown-card navbar-dropdown-menu navbar-dropdown-menu-borderless"
-                  aria-labelledby="navbarAppsDropdown" style="width: 22em;">
-                  <div class="card">
-                    <div class="card-header">
-                      <h4 class="card-title">Aplikasi lainnya</h4>
-                    </div>
-                    <div class="card-body card-body-height">
-                        <a class="dropdown-item" href="https://siakad.um.ac.id" target="_blank">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <img class="avatar avatar-xs avatar-4x3"
-                                         src="/assets/img/logos/logo-um.png" alt="Logo">
-                                </div>
-                                <div class="flex-grow-1 text-truncate ms-3">
-                                    <h5 class="mb-0">SIAKAD</h5>
-                                    <p class="card-text text-body">Sistem Informasi Akademik</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
+            
               @if(auth()->user() != null)
                   <li class="nav-item">
                       <!-- Account -->
@@ -211,6 +186,10 @@
                                   </div>
                               </div>
                               <div class="dropdown-divider"></div>
+                              <a class="dropdown-item" href="#">
+                                  <i class="bi-person me-2"></i>
+                                  Ubah Profil
+                              </a>
                               <a class="dropdown-item" href="#">
                                   <i class="bi-key me-2"></i>
                                   Ubah Kata Sandi
@@ -244,9 +223,7 @@
                     <i class="bi-house-door-fill dropdown-item-icon"></i> Dashboard
                 </a>
             </li>
-            @if (Auth::user()->hasRole('SUPERADMIN'))
-              @include('menu.superadmin')
-            @elseif (Auth::user()->hasRole('ADMINISTRATOR'))
+            @if (Auth::user()->hasRole('ADMINISTRATOR'))
               @include('menu.admin')
             @elseif (Auth::user()->hasRole('TEACHER'))
               @include('menu.teacher')
@@ -265,8 +242,8 @@
           <div class="container pt-3">
               <div class="row justify-content-between align-items-center">
                   <div class="col">
-                      <p class="fs-6 mb-0">&copy; 2025 - {{ date('Y') }} <span class="d-inline-block d-sm-none">FV UM</span> <span
-                              class="d-none d-sm-inline-block">Adaptived - Universitas Negeri Malang</span></p>
+                      <p class="fs-6 mb-0">&copy; 2025 - {{ date('Y') }} <span class="d-inline-block d-sm-none">-</span> <span
+                              class="d-none d-sm-inline-block">Bioadaptiveclass - Universitas Negeri Malang</span></p>
                   </div>
                   <div class="col-auto">
                       <div id="page_load_time" class="fs-6 mb-0 text-muted">

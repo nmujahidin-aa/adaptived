@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(School::class);
     }
+
+    public function getAvatar()
+    {
+        return asset('assets/img/160x160/img1.jpg');
+    }
 }

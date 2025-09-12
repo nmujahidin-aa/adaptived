@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_answers_to_assesment_questions', function (Blueprint $table) {
+        Schema::create('assesment_answers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('assesment_question_id')->nullable();
             $table->text('answer')->nullable();
 
-            $table->foreign('user_id', 'fk_user_answers_user')
+            $table->foreign('user_id', 'fk_assesment_answers_user')
                 ->references('id')->on('users')
                 ->onDelete('cascade');
 
-            $table->foreign('assesment_question_id', 'fk_user_answers_question')
+            $table->foreign('assesment_question_id', 'fk_assesment_answers_question')
                 ->references('id')->on('assesment_questions')
                 ->onDelete('cascade');
 
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_answers_to_assesment_questions');
+        Schema::dropIfExists('assesment_answers');
     }
 };

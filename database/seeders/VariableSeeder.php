@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class AssesmentVariableSeeder extends Seeder
+class VariableSeeder extends Seeder
 {
     /**
      * Run the database seeds.

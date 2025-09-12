@@ -8,32 +8,42 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use App\Enums\RoleEnum;
 
 class RegisterController extends Controller
 {
     private $view;
+    private $school;
+
     public function __construct()
     {
         $this->view = "pages.auth.";
+        $this->school = new \App\Models\School();
     }
     public function index(){
         if(Auth::check()){
             return redirect()->route('dashboard.index');
         }
-        return view($this->view."register");
+        $school = $this->school::all();
+
+        return view($this->view."register",[
+            'school' => $school,
+        ]);
     }
 
-    public function store(RegisterRequest $request): JsonResponse
+    public function store(RegisterRequest $request)
     {
+        $data = $request->validated();
         $user = User::create([
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
+            'name'     => $data['name'],
+            'gender'   => $data['gender'],
+            'school_id'=> $data['school_id'],
         ]);
+        $user->assignRole($data['role']);
 
-        return response()->json([
-            'success'  => true,
-            'message'  => 'Registrasi berhasil. Silakan login',
-            'redirect' => route('auth.login.index'),
-        ]);
+        alert()->html('Berhasil', 'Akun berhasil dibuat, silahkan login', 'success');
+        return redirect()->route('auth.login.index');
     }
 }

@@ -11,17 +11,15 @@ use BenSampo\Enum\Enum;
  */
 final class RoleEnum extends Enum
 {
-    const SUPERADMIN = 'SUPERADMIN';
     const ADMINISTRATOR = 'ADMINISTRATOR';
-    const STUDENT = 'STUDENTS';
+    const STUDENT = 'STUDENT';
     const TEACHER = 'TEACHER';
 
     public static function roles()
     {
         $roles = [
-            'SUPERADMIN',
             'ADMINISTRATOR',
-            'STUDENTS',
+            'STUDENT',
             'TEACHER',
         ];
         return $roles;

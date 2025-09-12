@@ -6,8 +6,8 @@
     <title>@yield('title') | Adaptived</title>
     <meta name="author" content="Fakultas Vokasi Universitas Negeri Malang">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/icon.png">
     <link rel="manifest" href="/assets/img/favicon/site.webmanifest">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
@@ -203,21 +203,33 @@
     <div class="container-fluid px-0" style="overflow: hidden;">
         <div class="row">
             <div class="col-lg-6 d-none d-lg-flex justify-content-center align-items-center min-vh-lg-100 position-relative px-0" style="background-color: #B4EBE6;">
+                <div class="position-absolute top-0 start-0 end-0 mt-3 mx-3">
+                    <div class="d-none d-lg-flex justify-content-between">
+                    <a href="#">
+                        <img class="w-100" src="/assets/img/favicon/icon-long.svg" alt="Image Description" data-hs-theme-appearance="default" style="min-width: 7rem; max-width: 12rem;">
+                        <img class="w-100" src="/assets/img/favicon/icon-long.svg" alt="Image Description" data-hs-theme-appearance="dark" style="min-width: 7rem; max-width: 12rem;">
+                    </a>
+                    </div>
+                </div>
                 <div class="col-8 text-center">
-                    <img src="/assets/img/backgrounds/icon.png" alt="Adaptived" loading="lazy" style="width: 300px;">
+                    <!-- <img src="/assets/img/backgrounds/icon.png" alt="Adaptived" loading="lazy" style="width: 300px;"> -->
+                    <div class="text-center mb-5">
+                        <img class="img-fluid" src="/assets/svg/illustrations/oc-chatting.svg" alt="Image Description" style="width: 12rem;" data-hs-theme-appearance="default">
+                        <img class="img-fluid" src="/assets/svg/illustrations-light/oc-chatting.svg" alt="Image Description" style="width: 12rem;" data-hs-theme-appearance="dark">
+                    </div>
 
                     <h2 class="mt-5">
-                        Hai, Selamat Datang di Sistem Informasi Terpadu Fakultas Vokasi UM!
+                        Hai, Selamat Datang di Bioadaptiveclass!
                     </h2>
                     <p>
-                        Satu akun untuk segala keperluan di Fakultas Vokasi Universitas Negeri Malang.
+                        Platform pembelajaran adaptif berbasis web yang dirancang khusus untuk mendukung proses pembelajaran biologi di tingkat SMA/MA.
                     </p>
                 </div>
 
             </div>
 
             <div class="col-lg-6 d-flex justify-content-center align-items-center min-vh-lg-100">
-                <div class="w-100 content-space-t-1 content-space-t-lg-1 content-space-b-1" style="max-width: 25rem;">
+                <div class="w-100 content-space-t-1 content-space-t-lg-1 content-space-b-1" style="max-width: 30rem;">
                     <div class="reveal reveal-right">
                         <div class="text-center">
                             {{-- <img class="shimmer" src="/assets/img/logos/auth_logo_default.png" alt="Fakultas Vokasi" width="100%" loading="lazy" style="max-width: 80%;"> --}}

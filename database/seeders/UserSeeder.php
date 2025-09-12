@@ -16,21 +16,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $now = Carbon::now();
-
-        // Create a default user with SUPERADMIN role
-        $Superadmin = User::firstOrCreate([
-            'email' => 'superadmin@gmail.com'
-        ],[
-            'email' => 'superadmin@gmail.com',
-            'name' => 'SUPERADMIN',
-            'phone' => '08123456789',
-            'password' => bcrypt('password'),
-            'email_verified_at' => $now,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-        $Superadmin->assignRole(RoleEnum::SUPERADMIN);
-
+        
         // Create a default user with ADMINISTRATOR role
         $Administrator = User::firstOrCreate([
             'email' => 'admin@gmail.com'

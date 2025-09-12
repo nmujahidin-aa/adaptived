@@ -6,15 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Variable extends Model
 {
-    protected $table = 'assesment_variables';
+    protected $table = 'variables';
     protected $fillable = [
         'icon', 
-        'name'
+        'name',
+        'status',
+        'image',
     ];
 
     public function questions()
     {
-        return $this->hasMany(Question::class, 'assesment_variable_id', 'id');
+        return $this->hasMany(Question::class, 'variable_id', 'id');
     }
 
     /**
@@ -22,7 +24,7 @@ class Variable extends Model
      */
     public function shortAnswerQuestions()
     {
-        return $this->hasMany(Question::class, 'assesment_variable_id', 'id')
+        return $this->hasMany(Question::class, 'variable_id', 'id')
                     ->where('type', 'short_answer');
     }
 

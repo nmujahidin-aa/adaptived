@@ -16,12 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/auth.php'));
 
             Route::middleware(['web', 'auth'])
-                ->namespace('App\\Http\\Controllers\\Superadmin')
-                ->prefix('superadmin')
-                ->as('superadmin.')
-                ->group(base_path('routes/superadmin.php'));
-
-            Route::middleware(['web', 'auth'])
                 ->namespace('App\\Http\\Controllers\\Admin')
                 ->prefix('admin')
                 ->as('admin.')

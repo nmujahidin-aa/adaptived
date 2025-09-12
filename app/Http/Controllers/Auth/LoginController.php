@@ -42,7 +42,6 @@ class LoginController extends Controller
                 $user = Auth::user();
 
                 if (!$user->hasRole([
-                    RoleEnum::SUPERADMIN,
                     RoleEnum::ADMINISTRATOR,
                     RoleEnum::TEACHER,
                     RoleEnum::STUDENT,

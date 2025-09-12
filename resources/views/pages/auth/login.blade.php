@@ -9,9 +9,9 @@
     @csrf
     <div class="text-center">
         <div class="mb-5">
-            <h1 class="display-5 mt-5">Masuk ke Adaptived</h1>
-            <p>Belum punya akun adaptived? <a class="link" href="{{ route('auth.register.index') }}">
-                    Buat akun baru
+            <h1 class="display-5 mt-5">Masuk ke Bioadaptiveclass</h1>
+            <p>Belum punya akun Bioadaptiveclass? <a class="link" href="{{ route('auth.register.index') }}">
+                    Buat akun
                 </a></p>
         </div>
     </div>
