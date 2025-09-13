@@ -4,53 +4,81 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Variable;
-use App\DataTables\VariablesDataTable;
+use App\Models\Assesment;
+use App\DataTables\Teacher\AssesmentsDataTable;
 use App\Helpers\HttpResponse;
 use Illuminate\Http\Response;
-use App\Http\Requests\Teacher\VariableRequest;
+use App\Http\Requests\Teacher\AssesmentRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AssesmentController extends Controller
 {
     private $view;
-    private $variable;
+    private $assesment;
 
     public function __construct(){
         $this->view = "pages.teacher.assesment.";
-        $this->variable = new Variable();
+        $this->assesment = new Assesment();
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(VariablesDataTable $dataTable) {
-        $variable_count = $this->variable->count();
+    public function index(AssesmentsDataTable $dataTable) {
+        $assesment_count = $this->assesment->count();
         return $dataTable->render($this->view . 'index', [
-            'variable_count' => $variable_count,
+            'assesment_count' => $assesment_count,
         ]);
     }
 
     public function edit(string $id = null) {
-        $variable = null;
+        $assesment = null;
+        $variables = \App\Models\Variable::all();
         if ($id) {
-            $variable = Variable::findOrFail($id);
+            $assesment = Assesment::findOrFail($id);
         }
         return view($this->view . 'edit', [
-            'variable' => $variable
+            'assesment' => $assesment,
+            'variables' => $variables
         ]);
     }
 
-    public function store(VariableRequest $request) {
-        if ($request->has('id')) {
-            $variable = Variable::findOrFail($request->id);
-            $variable->update($request->validated());
-            session()->flash('alert.assesment.success', 'Data variabel berhasil diperbarui');
-            return redirect()->route('teacher.assesment.edit', $request->id);
-        } else {
-            Variable::create($request->validated());
-            session()->flash('alert.assesment.success', 'Data variabel berhasil ditambahkan');
-            return redirect()->route('teacher.assesment.index');
+    public function store(AssesmentRequest $request) {
+        DB::beginTransaction();
+        try {
+            $data = $request->has('id')
+                ? Assesment::findOrFail($request->id)
+                : new Assesment();
+
+            
+            $data->fill($request->validated());
+
+            $question = $request->input('assesment-trixFields.question');
+
+            $data->question = $question;
+
+            $data->save();
+
+            DB::commit();
+
+            session()->flash(
+                'alert.assesment.success',
+                $request->has('id')
+                    ? 'Data assesment berhasil diperbarui'
+                    : 'Data assesment berhasil ditambahkan'
+            );
+
+            return $request->has('id')
+                ? redirect()->route('teacher.assesment.edit', $data->id)
+                : redirect()->route('teacher.assesment.index');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            session()->flash('alert.assesment.error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->withInput();
         }
     }
 
@@ -69,7 +97,7 @@ class AssesmentController extends Controller
         }
 
         foreach ($ids as $id) {
-            $assesment = Variable::find($id);
+            $assesment = Assesment::find($id);
             if (!$assesment) {
                 continue;
             }
@@ -79,7 +107,7 @@ class AssesmentController extends Controller
     }
 
     public function single_destroy() {
-        $assesment = Variable::findOrFail(request()->route('id'));
+        $assesment = Assesment::findOrFail(request()->route('id'));
 
         if (!$assesment) {
             return HttpResponse::fail(Response::HTTP_NOT_FOUND, 'Assesment tidak ditemukan atau sudah dihapus');

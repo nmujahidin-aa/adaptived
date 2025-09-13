@@ -23,7 +23,7 @@
 </li>
 
 <li class="nav-item">
-    <a class="nav-link @if(request()->routeIs('teacher.assessment*')) active @endif" href="">
+    <a class="nav-link @if(request()->routeIs('teacher.assesment*')) active @endif" href="{{route('teacher.assesment.index')}}">
         <i class="bi-collection-fill dropdown-item-icon"></i> Asesmen
     </a>
 </li>

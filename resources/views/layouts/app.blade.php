@@ -227,7 +227,7 @@
               @include('menu.admin')
             @elseif (Auth::user()->hasRole('TEACHER'))
               @include('menu.teacher')
-            @elseif (Auth::user()->hasRole('STUDENTS'))
+            @elseif (Auth::user()->hasRole('STUDENT'))
               @include('menu.students')
             @endif
           </ul>

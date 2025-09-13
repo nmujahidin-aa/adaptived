@@ -10,7 +10,7 @@
 
 {{-- Set page title --}}
 @section('title')
-    {{ isset($variable) ? 'Ubah Variabel: ' . $variable->name : 'Tambah Variabel' }}
+    {{ isset($variable) ? 'Ubah Assesment: ' . $variable->name : 'Tambah Assesment' }}
 @endsection
 
 @section('styles')
@@ -28,7 +28,7 @@
         <div class="ms-3">
             <h3 class="card-header-title">
                 <i class="bi-people me-2"></i>
-                {{ isset($variable) ? 'Ubah' : 'Tambah' }} Variabel
+                {{ isset($variable) ? 'Ubah' : 'Tambah' }} Assesment
             </h3>
             <p class="mb-0">Mohon isi data dengan benar dan teliti</p>
         </div>
@@ -69,8 +69,8 @@
             <div class="card mb-3">
                 <form id="form-assesment" action="{{ route('teacher.assesment.store') }}" method="POST" autocomplete="off">
                     <div class="card-header card-header-content-between">
-                        <h3 class="card-header-title">Data Variabel</h3>
-                        @if (isset($variable))
+                        <h3 class="card-header-title">Data Assesment</h3>
+                        @if (isset($data))
                             <button type="button" class="btn btn-soft-danger default_delete_button" data-endpoint="{{ route('teacher.assesment.single_destroy', ['id' => $variable->id]) }}" data-text="<i class='bi-trash me-2'></i> Hapus" data-text-loading="Menghapus">
                                 <i class="bi-trash me-2"></i> Hapus
                             </button>
@@ -78,27 +78,88 @@
                     </div>
                     <div class="card-body">
                         @csrf
-                        @if (isset($variable))
-                            <input type="hidden" name="id" value="{{ $variable->id }}" autocomplete="off">
+                        @if (isset($data))
+                            <input type="hidden" name="id" value="{{ $data->id }}" autocomplete="off">
                         @endif
+                        <input type="hidden" name="school_id" value="{{ Auth::user()->school_id }}">
+                        <input type="hidden" name="teacher_id" value="{{ Auth::id() }}">
 
                         <div class="row mb-4">
-                            <label for="name" class="col-sm-4 col-md-3 col-form-label form-label">Nama Variabel <span class="text-danger">*</span> <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Contoh: Genap 2024/2025"></i></label>
+                            <label for="title" class="col-sm-4 col-md-3 col-form-label form-label">Assesment <span class="text-danger">*</span> <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Contoh: Genap 2024/2025"></i></label>
                             <div class="col-sm-8 col-md-9">
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Misal: Berpikir Kritis" aria-label="Misal: Berpikir Kritis" value="{{ old('name') ? old('name') : (isset($variable) ? $variable->name : '') }}">
+                                <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" id="title" placeholder="Misal: Berpikir Kritis" aria-label="Misal: Berpikir Kritis" value="{{ old('title') ? old('title') : (isset($data) ? $data->title : '') }}">
                                 <div class="invalid-feedback">
-                                    @error('name')
+                                    @error('title')
                                     {{ $message }}
                                     @enderror
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-4">
-                            <label for="icon" class="col-sm-4 col-md-3 col-form-label form-label">Icon <span class="text-danger">*</span> <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Contoh: bar-chart-line untuk Genap 2024/2025"></i></label>
+                            <label for="variable_id" class="col-sm-4 col-md-3 col-form-label form-label">
+                                Variabel <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-8 col-md-9">
-                                <input type="text" class="form-control @error('icon') is-invalid @enderror" name="icon" id="icon" placeholder="Misal: bar-chart-line" aria-label="Misal: bar-chart-line" value="{{ old('icon') ? old('icon') : (isset($variable) ? $variable->icon : '') }}">
+                                <div class="tom-select-custom">
+                                    <select id="variable_id" class="js-select form-select w-100" name="variable_id" 
+                                        data-hs-tom-select-options='{
+                                            "searchInDropdown": true,
+                                            "dropdownWidth": "100%"
+                                        }'>
+                                        @foreach($variables as $row)
+                                            <option value="{{ $row->id }}"
+                                                @if(old('variable_id', $data->variable_id ?? '') == $row->id) selected @endif
+                                                data-option-template='
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="">
+                                                            <span class="d-block h6 text-bold mb-0"><i class="bi bi-{{ $row->icon }}"></i> {{ $row->name }}</span>
+                                                        </div>
+                                                    </div>'
+                                            >
+                                                {{ $row->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="invalid-feedback">
-                                    @error('icon')
+                                    @error('variable_id')
+                                        {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <label for="gender" class="col-sm-4 col-md-3 col-form-label form-label">Tipe Soal <span class="text-danger">*</span></label>
+                            <div class="col-sm-8 col-md-9">
+                                <div class="input-group input-group-sm-vertical">
+                                <!-- Radio Check -->
+                                <label class="form-control" for="essay">
+                                    <span class="form-check">
+                                    <input type="radio" class="form-check-input" name="type" value="essay" id="essay" {{ old('type', isset($data) ? $data->type : '') == 'essay' ? 'checked' : '' }}>
+                                    <span class="form-check-label">Essay</span>
+                                    </span>
+                                </label>
+                                <!-- End Radio Check -->
+
+                                <!-- Radio Check -->
+                                <label class="form-control" for="short_answer">
+                                    <span class="form-check">
+                                    <input type="radio" class="form-check-input" name="type" value="short_answer" id="short_answer" {{ old('type', isset($data) ? $data->type : '') == 'short_answer' ? 'checked' : '' }}>
+                                    <span class="form-check-label">Jawaban Singkat</span>
+                                    </span>
+                                </label>
+                                <!-- End Radio Check -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <label for="question" class="col-sm-4 col-md-3 col-form-label form-label">Pertanyaan <span class="text-danger">*</span> <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Contoh: bar-chart-line untuk Genap 2024/2025"></i></label>
+                            <div class="col-sm-8 col-md-9">
+                                @trix(\App\Models\Assesment::class, 'question')
+                                <div class="invalid-feedback">
+                                    @error('question')
                                     {{ $message }}
                                     @enderror
                                 </div>

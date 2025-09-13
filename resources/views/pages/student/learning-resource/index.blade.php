@@ -12,21 +12,22 @@
     </div>
 
     <div class="row g-4">
-        @forelse($assesment as $index => $row)
+        @forelse($learning_resources as $index => $row)
         <div class="col-md-6 col-lg-3">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-{{$row->icon}} fs-1 text-primary"></i>
                     <div class="my-3">
                         <h5 class="card-title mt-3">{{$row->title}}</h5>
+                        <span> {{$row->short_description}}</span>
                     </div>
-                    <a href="{{route('assesment.show', $row->id)}}" class="btn btn-sm btn-outline-primary">Lihat</a>
+                    <a href="{{route('learning-resource.show', $row->id)}}" class="btn btn-sm btn-outline-primary">Lihat</a>
                 </div>
             </div>
         </div>
         @empty
         <div class="col text-center">
-            <p class="text-muted">Asesmen belum diatur</p>
+            <p class="text-muted">Belum ada Sumber Belajar</p>
         </div>
         @endforelse
     </div>

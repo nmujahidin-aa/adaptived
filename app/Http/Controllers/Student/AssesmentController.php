@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Variable;
+use App\Models\Assesment;
 
 class AssesmentController extends Controller
 {
@@ -13,21 +13,24 @@ class AssesmentController extends Controller
 
     public function __construct(){
         $this->view = 'pages.student.assesment.';
-        $this->assesment = new Variable();
+        $this->assesment = new Assesment();
     }
 
     public function index(){
+        $assesment_count = 0;
         $assesment = $this->assesment::all();
         return view($this->view . 'index', [
             'assesment' => $assesment,
+            'assesment_count' => $assesment_count,
         ]);
     }
 
-    public function questionsIndex(string $assesment_id){
-        $questions = $this->assesment->findOrFail($assesment_id)->questions;
-        $assesment = $this->assesment::findOrFail($assesment_id);
-        return view($this->view . 'questions', [
-            'assesment' => $assesment,
+    public function show($id) {
+        $assesment = Assesment::findOrFail($id);
+
+        return view($this->view . 'show', [
+            'assesment' => $assesment
         ]);
     }
+
 }
