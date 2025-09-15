@@ -47,7 +47,6 @@ class WorksheetController extends Controller
 
     public function store(WorksheetRequest $request)
     {
-
         DB::beginTransaction();
         try {
             $data = $request->has('id')
@@ -68,8 +67,8 @@ class WorksheetController extends Controller
             session()->flash(
                 'alert.worksheet.success',
                 $request->has('id')
-                    ? 'Data lembar kerja berhasil diperbarui'
-                    : 'Data lembar kerja berhasil ditambahkan'
+                    ? 'Data kegiatan belajar berhasil diperbarui'
+                    : 'Data kegiatan belajar berhasil ditambahkan'
             );
 
             return $request->has('id')
@@ -106,18 +105,18 @@ class WorksheetController extends Controller
             }
             $worksheet->delete();
         }
-        return HttpResponse::success(Response::HTTP_OK, 'Lembar kerja berhasil dihapus');
+        return HttpResponse::success(Response::HTTP_OK, 'kegiatan belajar berhasil dihapus');
     }
 
     public function single_destroy() {
         $worksheet = $this->worksheet->findOrFail(request()->route('id'));
 
         if (!$worksheet) {
-            return HttpResponse::fail(Response::HTTP_NOT_FOUND, 'Lembar kerja tidak ditemukan atau sudah dihapus');
+            return HttpResponse::fail(Response::HTTP_NOT_FOUND, 'kegiatan belajar tidak ditemukan atau sudah dihapus');
         }
         $worksheet->delete();
-        session()->flash('alert.worksheet.success', 'Lembar kerja berhasil dihapus');
-        return HttpResponse::success(Response::HTTP_OK, 'Lembar kerja berhasil dihapus', [
+        session()->flash('alert.worksheet.success', 'kegiatan belajar berhasil dihapus');
+        return HttpResponse::success(Response::HTTP_OK, 'kegiatan belajar berhasil dihapus', [
             'redirect' => route('teacher.worksheet.index')
         ]);
     }

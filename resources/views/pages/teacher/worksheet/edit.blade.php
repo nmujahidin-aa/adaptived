@@ -10,7 +10,7 @@
 
 {{-- Set page title --}}
 @section('title')
-    {{ isset($data) ? 'Ubah Lembar Kerja: ' . $data->name : 'Tambah Lembar Kerja' }}
+    {{ isset($data) ? 'Ubah Kegiatan Belajar: ' . $data->name : 'Tambah Kegiatan Belajar' }}
 @endsection
 
 @section('styles')
@@ -22,13 +22,13 @@
 @section('content')
 <div class="content container-fluid">
     <div class="d-flex align-items-center mb-3">
-        <a href="{{ route('teacher.learning-resource.index') }}" class="btn btn-white">
+        <a href="{{ route('teacher.worksheet.index') }}" class="btn btn-white">
             <i class="bi bi-arrow-left"></i>
         </a>
         <div class="ms-3">
             <h3 class="card-header-title">
                 <i class="bi-people me-2"></i>
-                {{ isset($data) ? 'Ubah' : 'Tambah' }} Lembar Kerja
+                {{ isset($data) ? 'Ubah' : 'Tambah' }} Kegiatan Belajar
             </h3>
             <p class="mb-0">Mohon isi data dengan benar dan teliti</p>
         </div>
@@ -69,7 +69,7 @@
             <div class="card mb-3">
                 <form id="form-worksheet" action="{{ route('teacher.worksheet.store') }}" method="POST" autocomplete="off" enctype="multipart/form-data">
                     <div class="card-header card-header-content-between">
-                        <h3 class="card-header-title">Data Lembar Kerja</h3>
+                        <h3 class="card-header-title">Data Kegiatan Belajar</h3>
                         @if (isset($data))
                             <button type="button" class="btn btn-soft-danger default_delete_button" data-endpoint="{{ route('teacher.worksheet.single_destroy', ['id' => $data->id]) }}" data-text="<i class='bi-trash me-2'></i> Hapus" data-text-loading="Menghapus">
                                 <i class="bi-trash me-2"></i> Hapus
@@ -100,7 +100,7 @@
                         <div class="row mb-4">
                             <label for="instruction" class="col-sm-4 col-md-3 col-form-label form-label">Instruksi <span class="text-danger">*</span></label>
                             <div class="col-sm-8 col-md-9">
-                                @trix(\App\Models\Worksheet::class, 'instruction')
+                                @trix($data, 'instruction', ['class' => $errors->has('instruction') ? 'is-invalid' : ''])
                                 <div class="invalid-feedback">
                                     @error('instruction')
                                     {{ $message }}

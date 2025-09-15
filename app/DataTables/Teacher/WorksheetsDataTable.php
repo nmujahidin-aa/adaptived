@@ -107,7 +107,7 @@ class WorksheetsDataTable extends DataTable
     {
         return [
             DataTableHelper::addCheckbox()->width('5%'),
-            Column::make('title')->addClass('table-column-ps-0')->title('Judul')->width('30%'),
+            Column::make('title')->addClass('table-column-ps-0 text-wrap')->title('Nama Kegiatan Belajar')->width('30%'),
             Column::computed('school')->addClass('table-column-ps-0')->title('Institusi')->width('30%'),
             Column::computed('group')->title('Kelompok')->width('20%'),
             Column::computed('action')->title('Aksi')->width('20%'),

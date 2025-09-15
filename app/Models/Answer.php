@@ -3,14 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Te7aHoudini\LaravelTrix\Traits\HasTrixRichText;
 
 class Answer extends Model
 {
-    protected $table = 'user_answers_to_assesment_questions';
+    use HasTrixRichText;
 
-    protected $fillable = [
-        'user_id',
-        'assesment_question_id',
-        'answer',
-    ];
+    protected $table = 'answers';
+    protected $guarded = [];
+
+    public function assesment(){
+        return $this->belongsTo(Assesment::class, 'assesment_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
+    }  
 }

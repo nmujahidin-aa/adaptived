@@ -10,12 +10,13 @@
 
 {{-- Set page title --}}
 @section('title')
-    {{ isset($variable) ? 'Ubah Assesment: ' . $variable->name : 'Tambah Assesment' }}
+    {{ isset($data) ? 'Ubah Assesment ' . $data->name : 'Tambah Assesment' }}
 @endsection
 
 @section('styles')
     {{-- If you need additional CSS, put inside <style></style> here--}}
     <link rel="stylesheet" href="/assets/vendor/flatpickr/dist/flatpickr.min.css">
+
 @endsection
 
 
@@ -28,7 +29,7 @@
         <div class="ms-3">
             <h3 class="card-header-title">
                 <i class="bi-people me-2"></i>
-                {{ isset($variable) ? 'Ubah' : 'Tambah' }} Assesment
+                    {{ isset($data) ? 'Ubah Assesment ' . $data->name : 'Tambah Assesment' }}
             </h3>
             <p class="mb-0">Mohon isi data dengan benar dan teliti</p>
         </div>
@@ -71,7 +72,7 @@
                     <div class="card-header card-header-content-between">
                         <h3 class="card-header-title">Data Assesment</h3>
                         @if (isset($data))
-                            <button type="button" class="btn btn-soft-danger default_delete_button" data-endpoint="{{ route('teacher.assesment.single_destroy', ['id' => $variable->id]) }}" data-text="<i class='bi-trash me-2'></i> Hapus" data-text-loading="Menghapus">
+                            <button type="button" class="btn btn-soft-danger default_delete_button" data-endpoint="{{ route('teacher.assesment.single_destroy', ['id' => $data->id]) }}" data-text="<i class='bi-trash me-2'></i> Hapus" data-text-loading="Menghapus">
                                 <i class="bi-trash me-2"></i> Hapus
                             </button>
                         @endif
@@ -106,7 +107,7 @@
                                             "searchInDropdown": true,
                                             "dropdownWidth": "100%"
                                         }'>
-                                        @foreach($variables as $row)
+                                        @foreach($variable as $row)
                                             <option value="{{ $row->id }}"
                                                 @if(old('variable_id', $data->variable_id ?? '') == $row->id) selected @endif
                                                 data-option-template='
@@ -155,12 +156,18 @@
                         </div>
 
                         <div class="row mb-4">
-                            <label for="question" class="col-sm-4 col-md-3 col-form-label form-label">Pertanyaan <span class="text-danger">*</span> <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Contoh: bar-chart-line untuk Genap 2024/2025"></i></label>
+                            <label for="question" class="col-sm-4 col-md-3 col-form-label form-label">
+                                Pertanyaan <span class="text-danger">*</span>
+                                <i class="bi-question-circle text-body ms-1"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title="Contoh: bar-chart-line untuk Genap 2024/2025"></i>
+                            </label>
                             <div class="col-sm-8 col-md-9">
-                                @trix(\App\Models\Assesment::class, 'question')
+                                @trix($data, 'question', ['hideTools' => ['file-tools'], 'class' => $errors->has('question') ? 'is-invalid' : ''])
                                 <div class="invalid-feedback">
                                     @error('question')
-                                    {{ $message }}
+                                        {{ $message }}
                                     @enderror
                                 </div>
                             </div>

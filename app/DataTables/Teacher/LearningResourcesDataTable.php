@@ -29,13 +29,9 @@ class LearningResourcesDataTable extends DataTable
             })
             ->editColumn('title', function($row) {
                 $url = route('teacher.learning-resource.edit', $row->id);
-                $cover = $row->getCover();
                 return <<<HTML
                     <a class="d-flex align-items-center" href="{$url}">
-                        <div class="avatar">
-                            <img class="avatar-img" src="{$cover}" alt="School Image">
-                        </div>
-                        <div class="ms-3">
+                        <div class="">
                           <span class="d-block h5 text-bold mb-0" style="text-transform: uppercase;">
                             {$row->title}
                           </span>
@@ -103,7 +99,7 @@ class LearningResourcesDataTable extends DataTable
     {
         return [
             DataTableHelper::addCheckbox()->width('5%'),
-            Column::make('title')->addClass('table-column-ps-0')->title('Judul')->width('30%'),
+            Column::make('title')->addClass('table-column-ps-0 text-wrap')->title('Judul')->width('30%'),
             Column::computed('school')->addClass('table-column-ps-0')->title('Institusi')->width('30%'),
             Column::computed('action')->title('Aksi')->width('20%'),
         ];

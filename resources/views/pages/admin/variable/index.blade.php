@@ -34,3 +34,11 @@
         {{-- End DataTable --}}
     </div>
 @endsection
+
+@section('scripts')
+<script>
+    @if(session()->has('alert.variable.success'))
+    SweetAlert.success('Berhasil', '{{ session()->get('alert.variable.success') }}');
+    @endif
+</script>
+@endsection

@@ -24,8 +24,8 @@ class AssesmentRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'type' => 'required|in:essay,short_answer',
-            'assessment-trixFields' => 'nullable',
-            'attachment-assessment-trixFields' => 'nullable',
+            'assesment-trixFields' => 'nullable',
+            'attachment-assesment-trixFields' => 'nullable',
             'variable_id' => 'required|exists:variables,id',
             'school_id' => 'required|exists:schools,id'
         ];

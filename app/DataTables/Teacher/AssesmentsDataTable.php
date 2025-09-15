@@ -3,6 +3,7 @@
 namespace App\DataTables\Teacher;
 
 use App\Models\Assesment;
+use App\Models\Answer;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -24,10 +25,10 @@ class AssesmentsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->editColumn('title', function($row) {
-                $url = route('teacher.assesment.edit', $row->id);
+                 $url = route('teacher.assesment.edit', $row->id);
                 return <<<HTML
                     <a class="d-flex align-items-center" href="{$url}">
-                        <div class="ms-3">
+                        <div class="">
                           <span class="d-block h5 text-bold mb-0" style="text-transform: uppercase;">
                             {$row->title}
                           </span>
@@ -40,12 +41,17 @@ class AssesmentsDataTable extends DataTable
                     <span class="d-block fs-5 text-bold"><i class="bi bi-{$row->variable->icon} text-dark me-1"></i>{$row->variable->name}</span>
                 HTML;
             })
+            ->editColumn('answer', function($row) {
+                $url = route('teacher.answer.index', ['assesment_id' => $row->id]);
+                $count = $row->answers()->count();
+                return DataTableHelper::actionButtonAnalysis($row, $url, $count);
+            })
             ->editColumn('action', function($row) {
                 $url = route('teacher.assesment.edit', ['id' => $row->id]);
                 $delete = route('teacher.assesment.single_destroy', ['id' => $row->id]);
                 return DataTableHelper::actionButton($row, $url, $delete);
             })
-            ->rawColumns(['action','title', 'variable', 'checkbox']);
+            ->rawColumns(['action','title','answer','variable', 'checkbox']);
     }
 
     /**
@@ -76,7 +82,8 @@ class AssesmentsDataTable extends DataTable
             DataTableHelper::addCheckbox()->width('5%'),
             Column::make('title')->addClass('table-column-ps-0')->title('Assesment')->width('30%'),
             Column::computed('variable')->addClass('table-column-ps-0')->title('Variabel')->width('30%'),
-            Column::computed('action')->title('Aksi')->width('20%'),
+            Column::computed('answer')->title('Jawaban')->width('12%'),
+            Column::computed('action')->title('Aksi')->width('12%'),
         ];
     }
 

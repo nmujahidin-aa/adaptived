@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Student\AssesmentController;
 use App\Http\Controllers\Student\LearningResourceController;
+use App\Http\Controllers\Student\WorkSheetController;
 
 
 
@@ -15,9 +16,19 @@ Route::group(['namespace'=>'App\Http\Controllers', 'middleware' => ['auth']], fu
             Route::get('/', [LearningResourceController::class, 'index'])->name('index');
             Route::get('/show/{id}', [LearningResourceController::class, 'show'])->name('show');
         });
+
+        Route::group(['prefix' => 'worksheet', 'as' => 'worksheet.'], function () {
+            Route::get('/', [WorksheetController::class, 'index'])->name('index');
+            Route::get('/show/{id}', [WorksheetController::class, 'show'])->name('show');
+        });
+
     });
+
+
     Route::group(['prefix' => 'assesment', 'as' => 'assesment.'], function () {
         Route::get('/', [AssesmentController::class, 'index'])->name('index');
         Route::get('/show/{id}', [AssesmentController::class, 'show'])->name('show');
+
+        Route::post('/answer/store/{id}', [AssesmentController::class, 'storeAnswer'])->name('answer.store');
     });
 });

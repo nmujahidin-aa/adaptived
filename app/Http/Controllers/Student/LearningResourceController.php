@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LearningResource;
+use Illuminate\Support\Facades\Auth;
 
 class LearningResourceController extends Controller
 {
@@ -19,8 +20,9 @@ class LearningResourceController extends Controller
     }
 
     public function index() {
-        $learning_resource_count = 0; 
-        $learning_resources = $this->learning_resource::all();
+        $learning_resource_count = 0;
+        $user = Auth::user();
+        $learning_resources = $this->learning_resource->where('school_id', $user->school_id)->get();
         return view($this->view . 'index', compact('learning_resource_count', 'learning_resources'));
     }
 

@@ -13,17 +13,16 @@
 
     <div class="row g-4">
         @forelse($learning_resources as $index => $row)
-        <div class="col-md-6 col-lg-3">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-{{$row->icon}} fs-1 text-primary"></i>
-                    <div class="my-3">
-                        <h5 class="card-title mt-3">{{$row->title}}</h5>
-                        <span> {{$row->short_description}}</span>
-                    </div>
-                    <a href="{{route('learning-resource.show', $row->id)}}" class="btn btn-sm btn-outline-primary">Lihat</a>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <!-- Card -->
+            <a class="card card-sm card-transition h-100" href="{{ route('learning-resource.show', $row->id) }}" data-aos="fade-up">
+                <img class="card-img p-2" src="{{ $row->getCover() }}" alt="Image Description">
+                <div class="card-body">
+                <h4 class="card-title text-inherit">{{ $row->title }}</h4>
+                <p class="card-text small text-body">{{ $row->short_description_limit() }}</p>
                 </div>
-            </div>
+            </a>
+            <!-- End Card -->
         </div>
         @empty
         <div class="col text-center">

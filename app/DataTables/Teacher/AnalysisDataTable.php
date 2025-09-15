@@ -1,8 +1,8 @@
 <?php
 
-namespace App\DataTables;
+namespace App\DataTables\Teacher;
 
-use App\Models\Student;
+use App\Models\Analysis;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -11,27 +11,46 @@ use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Auth;
+use App\Helpers\DataTableHelper;
 
-class StudentsDataTable extends DataTable
+class AnalysisDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
      *
-     * @param QueryBuilder<Student> $query Results from query() method.
+     * @param QueryBuilder<Analysi> $query Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'students.action')
-            ->setRowId('id');
+            ->addColumn('checkbox', function ($row) {
+                return DataTableHelper::checkbox($row, $row->name);
+            })
+            ->editColumn('name', function($row) {
+                $url = route('teacher.student.edit', $row->id);
+                return <<<HTML
+                    <a class="d-flex align-items-center" href="{$url}">
+                        <div class="avatar avatar-circle">
+                            <img class="avatar-img" src="{$row->getAvatar()}" alt="School Image">
+                        </div>
+                        <div class="ms-3">
+                          <span class="d-block h5 text-bold mb-0" style="text-transform: uppercase;">
+                            {$row->name}
+                          </span>
+                          <span class="d-block fs-5 text-body text-dark">{$row->email}</span>
+                        </div>
+                    </a>
+                HTML;  
+            });
     }
 
     /**
      * Get the query source of dataTable.
      *
-     * @return QueryBuilder<Student>
+     * @return QueryBuilder<Analysis>
      */
-    public function query(Student $model): QueryBuilder
+    public function query(Analysis $model): QueryBuilder
     {
         return $model->newQuery();
     }
@@ -42,7 +61,7 @@ class StudentsDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('students-table')
+                    ->setTableId('analysis-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->orderBy(1)
@@ -80,6 +99,6 @@ class StudentsDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Students_' . date('YmdHis');
+        return 'Analysis_' . date('YmdHis');
     }
 }

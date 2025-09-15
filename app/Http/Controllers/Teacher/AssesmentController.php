@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use App\Http\Requests\Teacher\AssesmentRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Variable;
 
 class AssesmentController extends Controller
 {
@@ -34,14 +35,14 @@ class AssesmentController extends Controller
     }
 
     public function edit(string $id = null) {
-        $assesment = null;
-        $variables = \App\Models\Variable::all();
+        $data = null;
+        $variable = Variable::all();
         if ($id) {
-            $assesment = Assesment::findOrFail($id);
+            $data = $this->assesment::findOrFail($id);
         }
         return view($this->view . 'edit', [
-            'assesment' => $assesment,
-            'variables' => $variables
+            'data' => $data,
+            'variable' => $variable
         ]);
     }
 
@@ -57,7 +58,7 @@ class AssesmentController extends Controller
 
             $question = $request->input('assesment-trixFields.question');
 
-            $data->question = $question;
+            $data->question = $request->input('assesment-trixFields.question', $data->question);
 
             $data->save();
 
@@ -117,5 +118,5 @@ class AssesmentController extends Controller
         return HttpResponse::success(Response::HTTP_OK, 'Assesment berhasil dihapus', [
             'redirect' => route('teacher.assesment.index')
         ]);
-    }
+    } 
 }

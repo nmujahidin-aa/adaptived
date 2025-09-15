@@ -63,4 +63,11 @@ class User extends Authenticatable
     {
         return asset('assets/img/160x160/img1.jpg');
     }
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_members')
+                    ->withPivot('role');
+    }
+
 }

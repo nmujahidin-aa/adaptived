@@ -19,4 +19,8 @@ class Worksheet extends Model
     {
         return $this->hasMany(Group::class, 'worksheet_id');
     }
+
+    public function user(){
+        return $this->hasMany(Worksheet::class, 'teacher_id', 'id');
+    }
 }

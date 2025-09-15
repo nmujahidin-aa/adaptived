@@ -18,4 +18,8 @@ class Assesment extends Model
     public function variable(){
         return $this->belongsTo(Variable::class);
     }
+
+    public function answers(){
+        return $this->hasMany(Answer::class);
+    }
 }

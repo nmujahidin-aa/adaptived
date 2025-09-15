@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assesment_variables', function (Blueprint $table) {
+        Schema::create('answers', function (Blueprint $table) {
             $table->id();
-            $table->string('icon')->nullable();
-            $table->string('name')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete(action: 'cascade');
+            $table->foreignId('assesment_id')->nullable()->constrained()->onDelete(action: 'cascade');
+            $table->text('answer')->nullable();
+            $table->text('analysis')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assesment_variables');
+        Schema::dropIfExists('answers');
     }
 };

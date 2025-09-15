@@ -5,7 +5,7 @@
 </li>
 
 <li class="nav-item">
-    <a class="nav-link @if(request()->routeIs('admin.expertise*')) active @endif" href="">
+    <a class="nav-link @if(request()->routeIs('worksheet.*')) active @endif" href="{{route('worksheet.index')}}">
         <i class="bi-collection-fill dropdown-item-icon"></i> LKPD
     </a>
 </li>

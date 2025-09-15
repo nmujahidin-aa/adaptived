@@ -19,4 +19,8 @@ class LearningResource extends Model
     public function getCover(){
         return $this->cover ? asset('storage/public/' . $this->cover) : asset('assets/img/160x160/img2.jpg');
     }
+
+    public function short_description_limit($limit = 100){
+        return strlen($this->short_description) > $limit ? substr($this->short_description, 0, $limit) . '...' : $this->short_description;
+    }
 }

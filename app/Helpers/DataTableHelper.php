@@ -442,6 +442,15 @@ class DataTableHelper
         HTML;
     }
 
+    public static function actionButtonAnalysis(object $row, string $route, string $count) : string {
+        return <<<HTML
+            <div class="btn-group" role="group">
+            <a class="btn btn-white btn-sm" href="{$route}">
+              <i class="bi-puzzle-fill me-1"></i> {$count} Jawaban
+            </a>
+        HTML;
+    }
+
     public static function actionButtonAssesment(object $row, string $add_questions_route, string $edit_route, string $delete_route) : string {
         return <<<HTML
             <div class="btn-group" role="group">

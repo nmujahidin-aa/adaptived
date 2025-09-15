@@ -131,7 +131,7 @@
                         <div class="row mb-4">
                             <label for="short_description" class="col-sm-4 col-md-3 col-form-label form-label">Deskripsi Singkat <span class="text-danger">*</span></label>
                             <div class="col-sm-8 col-md-9">
-                                <input type="text" class="form-control @error('short_description') is-invalid @enderror" name="short_description" id="short_description" placeholder="tuliskan deskripsi singkat" aria-label="tuliskan deskripsi singkat" value="{{ old('short_description') ? old('short_description') : (isset($data) ? $data->short_description : '') }}">
+                                <input type="text" class="form-control @error('short_description') is-invalid @enderror" name="short_description" id="short_description" placeholder="tuliskan deskripsi singkat (max 255 karakter)" aria-label="tuliskan deskripsi singkat (max 255 karakter)" value="{{ old('short_description') ? old('short_description') : (isset($data) ? $data->short_description : '') }}">
                                 <div class="invalid-feedback">
                                     @error('short_description')
                                     {{ $message }}
@@ -143,7 +143,7 @@
                         <div class="row mb-4">
                             <label for="content" class="col-sm-4 col-md-3 col-form-label form-label">Konten/Materi <span class="text-danger">*</span></label>
                             <div class="col-sm-8 col-md-9">
-                                @trix(\App\Models\LearningResource::class, 'content')
+                                @trix($data, 'content', ['class' => $errors->has('content') ? 'is-invalid' : ''])
                                 <div class="invalid-feedback">
                                     @error('content')
                                     {{ $message }}
