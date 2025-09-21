@@ -47,12 +47,6 @@ class AssesmentsDataTable extends DataTable
                 $type = 'Pertanyaan';
                 return DataTableHelper::actionButtonAnalysis($row, $url, $count, $type);
             })
-            ->editColumn('answer', function($row) {
-                $url = route('teacher.answer.index', ['assesment_id' => $row->id]);
-                $count = $row->answers()->count();
-                $type = 'Jawaban';
-                return DataTableHelper::actionButtonAnalysis($row, $url, $count, $type);
-            })
             ->editColumn('action', function($row) {
                 $url = route('teacher.assesment.edit', ['id' => $row->id]);
                 $delete = route('teacher.assesment.single_destroy', ['id' => $row->id]);
