@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('worksheets', function (Blueprint $table) {
+        Schema::create('worksheet_instructions', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
-            $table->string('cover')->nullable();
-            $table->foreignId('teacher_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('school_id')->nullable()->constrained('schools')->onDelete('cascade');
+            $table->text('instruction')->nullable();
+            $table->foreignId('worksheet_id')->nullable()->constrained('worksheets')->onDelete('cascade');
+            $table->string('order')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('worksheets');
+        Schema::dropIfExists('worksheet_instructions');
     }
 };

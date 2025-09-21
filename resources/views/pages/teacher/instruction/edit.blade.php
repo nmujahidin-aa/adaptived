@@ -10,7 +10,7 @@
 
 {{-- Set page title --}}
 @section('title')
-    {{ isset($data) ? 'Ubah Pertanyaan ': 'Tambah Pertanyaan' }}
+    {{ isset($data) ? 'Ubah Intruksi ': 'Tambah Intruksi' }}
 @endsection
 
 @section('styles')
@@ -23,13 +23,13 @@
 @section('content')
 <div class="content container-fluid">
     <div class="d-flex align-items-center mb-3">
-        <a href="{{ route('teacher.question.index', ['assesment_id' => $assesment_id]) }}" class="btn btn-white">
+        <a href="{{ route('teacher.instruction.index', ['worksheet_id' => $worksheet_id]) }}" class="btn btn-white">
             <i class="bi bi-arrow-left"></i>
         </a>
         <div class="ms-3">
             <h3 class="card-header-title">
                 <i class="bi-people me-2"></i>
-                    {{ isset($data) ? 'Ubah Pertanyaan ' : 'Tambah Pertanyaan' }}
+                    {{ isset($data) ? 'Ubah Intruksi ' : 'Tambah Intruksi' }}
             </h3>
             <p class="mb-0">Mohon isi data dengan benar dan teliti</p>
         </div>
@@ -68,11 +68,11 @@
         <div class="col-lg-9">
 
             <div class="card mb-3">
-                <form id="form-question" action="{{ route('teacher.question.store', ['assesment_id' => $assesment_id]) }}" method="POST" autocomplete="off">
+                <form id="form-instruction" action="{{ route('teacher.instruction.store', ['worksheet_id' => $worksheet_id]) }}" method="POST" autocomplete="off">
                     <div class="card-header card-header-content-between">
-                        <h3 class="card-header-title">Data Pertanyaan</h3>
+                        <h3 class="card-header-title">Data Intruksi</h3>
                         @if (!empty($data->id))
-                            <button type="button" class="btn btn-soft-danger default_delete_button" data-endpoint="{{ route('teacher.question.single_destroy', ['assesment_id' => $assesment_id, 'id' => $data->id]) }}" data-text="<i class='bi-trash me-2'></i> Hapus" data-text-loading="Menghapus">
+                            <button type="button" class="btn btn-soft-danger default_delete_button" data-endpoint="{{ route('teacher.instruction.single_destroy', ['worksheet_id' => $worksheet_id, 'id' => $data->id]) }}" data-text="<i class='bi-trash me-2'></i> Hapus" data-text-loading="Menghapus">
                                 <i class="bi-trash me-2"></i> Hapus
                             </button>
                         @endif
@@ -82,45 +82,20 @@
                         @if (isset($data))
                             <input type="hidden" name="id" value="{{ $data->id }}" autocomplete="off">
                         @endif
-                        <input type="hidden" name="assesment_id" value="{{ $assesment_id }}">
+                        <input type="hidden" name="worksheet_id" value="{{ $worksheet_id }}">
 
                         <div class="row mb-4">
-                            <label for="gender" class="col-sm-4 col-md-3 col-form-label form-label">Tipe Soal <span class="text-danger">*</span></label>
-                            <div class="col-sm-8 col-md-9">
-                                <div class="input-group input-group-sm-vertical">
-                                <!-- Radio Check -->
-                                <label class="form-control" for="essay">
-                                    <span class="form-check">
-                                    <input type="radio" class="form-check-input" name="type" value="essay" id="essay" {{ old('type', isset($data) ? $data->type : '') == 'essay' ? 'checked' : '' }}>
-                                    <span class="form-check-label">Essay</span>
-                                    </span>
-                                </label>
-                                <!-- End Radio Check -->
-
-                                <!-- Radio Check -->
-                                <label class="form-control" for="short_answer">
-                                    <span class="form-check">
-                                    <input type="radio" class="form-check-input" name="type" value="short_answer" id="short_answer" {{ old('type', isset($data) ? $data->type : '') == 'short_answer' ? 'checked' : '' }}>
-                                    <span class="form-check-label">Jawaban Singkat</span>
-                                    </span>
-                                </label>
-                                <!-- End Radio Check -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <label for="question" class="col-sm-4 col-md-3 col-form-label form-label">
-                                Pertanyaan <span class="text-danger">*</span>
+                            <label for="instruction" class="col-sm-4 col-md-3 col-form-label form-label">
+                                Intruksi <span class="text-danger">*</span>
                                 <i class="bi-question-circle text-body ms-1"
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="top"
                                 title="Contoh: bar-chart-line untuk Genap 2024/2025"></i>
                             </label>
                             <div class="col-sm-8 col-md-9">
-                                @trix($data, 'question', ['hideTools' => ['file-tools'], 'class' => $errors->has('question') ? 'is-invalid' : ''])
+                                @trix($data, 'instruction', ['hideTools' => ['file-tools'], 'class' => $errors->has('instruction') ? 'is-invalid' : ''])
                                 <div class="invalid-feedback">
-                                    @error('question')
+                                    @error('instruction')
                                         {{ $message }}
                                     @enderror
                                 </div>
@@ -147,11 +122,11 @@
     <script src="/assets/vendor/flatpickr/dist/flatpickr.min.js"></script>
     <script src="/assets/vendor/flatpickr/dist/l10n/id.js"></script>
     <script>
-        @if(session()->has('alert.question.success'))
-        SweetAlert.success('Berhasil', '{{ session()->get('alert.question.success') }}');
+        @if(session()->has('alert.instruction.success'))
+        SweetAlert.success('Berhasil', '{{ session()->get('alert.instruction.success') }}');
         @endif
         initInputResetEventHandler();
-        addFormEditedEventHandler('#form-question');
+        addFormEditedEventHandler('#form-instruction');
 
         (function() {
             HSCore.components.HSFlatpickr.init('.js-flatpickr');

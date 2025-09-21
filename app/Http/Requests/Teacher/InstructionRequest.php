@@ -4,7 +4,7 @@ namespace App\Http\Requests\Teacher;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class QuestionRequest extends FormRequest
+class InstructionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,19 +22,16 @@ class QuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'assesment_id' => ['required', 'exists:assesments,id'],
-            'question-trixFields' => 'nullable',
-            'type' => 'required|string|max:255',
+            'worksheet_id' => ['required', 'exists:worksheets,id'],
+            'instruction-trixFields' => 'nullable',
         ];
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [
-            'assesment_id.required' => 'Kegiatan Belajar wajib diisi',
-            'assesment_id.exists' => 'Kegiatan Belajar yang dipilih tidak valid',
-            'question-trixFields.required' => 'Pertanyaan harus diisi',
-            'type.required' => 'Tipe harus diisi',
+            'worksheet_id.required' => 'Worksheet ID wajib diisi.',
+            'worksheet_id.exists' => 'Worksheet ID yang dipilih tidak valid.',
         ];
     }
 }

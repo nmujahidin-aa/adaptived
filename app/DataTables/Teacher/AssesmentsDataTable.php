@@ -41,17 +41,24 @@ class AssesmentsDataTable extends DataTable
                     <span class="d-block fs-5 text-bold"><i class="bi bi-{$row->variable->icon} text-dark me-1"></i>{$row->variable->name}</span>
                 HTML;
             })
+            ->editColumn('question', function($row) {
+                $url = route('teacher.question.index', ['assesment_id' => $row->id]);
+                $count = $row->questions()->count();
+                $type = 'Pertanyaan';
+                return DataTableHelper::actionButtonAnalysis($row, $url, $count, $type);
+            })
             ->editColumn('answer', function($row) {
                 $url = route('teacher.answer.index', ['assesment_id' => $row->id]);
                 $count = $row->answers()->count();
-                return DataTableHelper::actionButtonAnalysis($row, $url, $count);
+                $type = 'Jawaban';
+                return DataTableHelper::actionButtonAnalysis($row, $url, $count, $type);
             })
             ->editColumn('action', function($row) {
                 $url = route('teacher.assesment.edit', ['id' => $row->id]);
                 $delete = route('teacher.assesment.single_destroy', ['id' => $row->id]);
                 return DataTableHelper::actionButton($row, $url, $delete);
             })
-            ->rawColumns(['action','title','answer','variable', 'checkbox']);
+            ->rawColumns(['action','title','question','answer','variable', 'checkbox']);
     }
 
     /**
@@ -80,10 +87,11 @@ class AssesmentsDataTable extends DataTable
     {
         return [
             DataTableHelper::addCheckbox()->width('5%'),
-            Column::make('title')->addClass('table-column-ps-0')->title('Assesment')->width('30%'),
-            Column::computed('variable')->addClass('table-column-ps-0')->title('Variabel')->width('30%'),
-            Column::computed('answer')->title('Jawaban')->width('12%'),
-            Column::computed('action')->title('Aksi')->width('12%'),
+            Column::make('title')->addClass('table-column-ps-0 text-wrap')->title('Assesment')->width('30%'),
+            Column::computed('variable')->addClass('table-column-ps-0')->title('Variabel')->width('20%'),
+            Column::computed('question')->title('Pertanyaan')->width('15%'),
+            Column::computed('answer')->title('Jawaban')->width('15%'),
+            Column::computed('action')->title('Aksi')->width('15%'),
         ];
     }
 

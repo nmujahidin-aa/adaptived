@@ -47,22 +47,13 @@ class AssesmentController extends Controller
     }
 
     public function store(AssesmentRequest $request) {
-        DB::beginTransaction();
         try {
             $data = $request->has('id')
                 ? Assesment::findOrFail($request->id)
                 : new Assesment();
 
-            
             $data->fill($request->validated());
-
-            $question = $request->input('assesment-trixFields.question');
-
-            $data->question = $request->input('assesment-trixFields.question', $data->question);
-
             $data->save();
-
-            DB::commit();
 
             session()->flash(
                 'alert.assesment.success',
@@ -76,7 +67,6 @@ class AssesmentController extends Controller
                 : redirect()->route('teacher.assesment.index');
 
         } catch (\Throwable $e) {
-            DB::rollBack();
             report($e);
             session()->flash('alert.assesment.error', 'Terjadi kesalahan: ' . $e->getMessage());
             return back()->withInput();

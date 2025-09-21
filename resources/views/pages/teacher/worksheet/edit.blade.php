@@ -68,25 +68,54 @@
 
             <div class="card mb-3">
                 <form id="form-worksheet" action="{{ route('teacher.worksheet.store') }}" method="POST" autocomplete="off" enctype="multipart/form-data">
-                    <div class="card-header card-header-content-between">
+                    <div class="card-header card-header-content">
                         <h3 class="card-header-title">Data Kegiatan Belajar</h3>
-                        @if (isset($data))
-                            <button type="button" class="btn btn-soft-danger default_delete_button" data-endpoint="{{ route('teacher.worksheet.single_destroy', ['id' => $data->id]) }}" data-text="<i class='bi-trash me-2'></i> Hapus" data-text-loading="Menghapus">
-                                <i class="bi-trash me-2"></i> Hapus
-                            </button>
-                        @endif
                     </div>
                     <div class="card-body">
                         @csrf
                         @if (isset($data))
                             <input type="hidden" name="id" value="{{ $data->id }}" autocomplete="off">
                         @endif
+
                         <input type="hidden" name="school_id" value="{{ Auth::user()->school_id }}">
                         <input type="hidden" name="teacher_id" value="{{ Auth::id() }}">
 
+                        <div class="row mb-4">
+                            <label for="logo" class="col-sm-4 col-md-3 col-form-label form-label">Cover <span class="text-secondary">(opsioanal)</span></label>
+                            <div class="col-sm-9">
+                                <div class="d-flex align-items-center">
+                                    <!-- Avatar -->
+                                    <label class="avatar avatar-xl avatar-uploader me-5" for="avatarUploader">
+                                    <img id="avatarImg" class="avatar-img" src="{{ isset($data) ? asset('storage/public/'.$data->cover) : '' }}" alt="Image Description">
+
+                                    <input type="file" name="cover" class="js-file-attach avatar-uploader-input" id="avatarUploader" data-hs-file-attach-options='{
+                                                "textTarget": "#avatarImg",
+                                                "mode": "image",
+                                                "targetAttr": "src",
+                                                "resetTarget": ".js-file-attach-reset-img",
+                                                "resetImg": "./assets/img/160x160/img2.jpg",
+                                                "allowTypes": [".png", ".jpeg", ".jpg"]
+                                            }'>
+
+                                    <span class="avatar-uploader-trigger">
+                                        <i class="bi-pencil avatar-uploader-icon shadow-sm"></i>
+                                    </span>
+                                    </label>
+                                    <!-- End Avatar -->
+
+                                    <button type="button" class="js-file-attach-reset-img btn btn-white">Hapus</button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    @error('cover')
+                                    {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div class="row mb-4">
-                            <label for="title" class="col-sm-4 col-md-3 col-form-label form-label">Judul LKPD <span class="text-danger">*</span> </label>
+                            <label for="title" class="col-sm-4 col-md-3 col-form-label form-label">Nama Kegiatan Belajar <span class="text-danger">*</span> </label>
                             <div class="col-sm-8 col-md-9">
                                 <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" id="title" placeholder="Misal: Perkembangan dan Pertumbuhan" aria-label="Misal: Perkembangan dan Pertumbuhan" value="{{ old('title') ? old('title') : (isset($data) ? $data->title : '') }}">
                                 <div class="invalid-feedback">
@@ -97,20 +126,7 @@
                             </div>
                         </div>
 
-                        <div class="row mb-4">
-                            <label for="instruction" class="col-sm-4 col-md-3 col-form-label form-label">Instruksi <span class="text-danger">*</span></label>
-                            <div class="col-sm-8 col-md-9">
-                                @trix($data, 'instruction', ['class' => $errors->has('instruction') ? 'is-invalid' : ''])
-                                <div class="invalid-feedback">
-                                    @error('instruction')
-                                    {{ $message }}
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        
-
+                    </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-end gap-2">
                             <button type="submit" class="btn btn-primary">

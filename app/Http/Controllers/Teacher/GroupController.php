@@ -64,22 +64,26 @@ class GroupController extends Controller
         ]);
     }
 
-    public function store(GroupRequest $request){
+    public function store(GroupRequest $request)
+    {
         try {
-            DB::transaction(function () use ($request, &$group) {
-                
+            $data = null;
+
+            DB::transaction(function () use ($request, &$data) {
                 $isUpdate = $request->has('id');
-                $group = $isUpdate
+
+                $data = $isUpdate
                     ? Group::findOrFail($request->id)
                     : new Group();
 
-                $group->name = $request->input('name');
-                $group->worksheet_id = $request->input('worksheet_id');
-                $group->school_id = $request->input('school_id');
-                $group->save();
+                $data->fill($request->only(['name', 'school_id']));
+
+                $data->save();
+                $data->worksheets()->sync($request->input('worksheet_id', []));
+
 
                 $membersToSync = [];
-                
+
                 $membersToSync[$request->leader_id] = ['role' => 'leader'];
 
                 foreach ($request->input('member_id', []) as $memberId) {
@@ -87,18 +91,25 @@ class GroupController extends Controller
                         $membersToSync[$memberId] = ['role' => 'member'];
                     }
                 }
-                
-                $group->members()->sync($membersToSync);
+
+                $data->members()->sync($membersToSync);
             });
 
-            $message = $request->has('id') ? 'Data kelompok berhasil diubah.' : 'Data kelompok berhasil ditambahkan.';
+            $message = $request->has('id')
+                ? 'Data kelompok berhasil diubah.'
+                : 'Data kelompok berhasil ditambahkan.';
+
+            session()->flash('alert.group.success', $message);
 
             return $request->has('id')
-                ? redirect()->route('teacher.group.edit', $group->id)
+                ? redirect()->route('teacher.group.edit', $data->id)
                 : redirect()->route('teacher.group.index');
 
-        } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage())->withInput();
+        } catch (\Throwable $e) {
+            report($e);
+            return back()
+                ->with('alert.group.error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage())
+                ->withInput();
         }
     }
 }

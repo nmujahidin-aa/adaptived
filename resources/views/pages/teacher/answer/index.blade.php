@@ -10,7 +10,7 @@
             </a>
             <div class="ms-3">
                 <h1 class="card-header-title">
-                    Analisis Asesmen <span class="badge bg-soft-dark text-dark ms-2"></span>
+                    Analisis Asesmen <span class="badge bg-soft-dark text-dark ms-2"> {{ $assesment_count }}</span>
                 </h1>
             </div>
         </div>

@@ -442,11 +442,29 @@ class DataTableHelper
         HTML;
     }
 
-    public static function actionButtonAnalysis(object $row, string $route, string $count) : string {
+    public static function actionButtonAnalysis(object $row, string $route, string $count, string $type) : string {
         return <<<HTML
             <div class="btn-group" role="group">
             <a class="btn btn-white btn-sm" href="{$route}">
-              <i class="bi-puzzle-fill me-1"></i> {$count} Jawaban
+              <i class="bi-puzzle-fill me-1"></i> {$count} {$type}
+            </a>
+        HTML;
+    }
+
+    public static function actionButtonInstruction(object $row, string $route, string $count) : string {
+        return <<<HTML
+            <div class="btn-group" role="group">
+            <a class="btn btn-white btn-sm" href="{$route}">
+              <i class="bi-cone-striped me-1"></i> {$count} Instruksi
+            </a>
+        HTML;
+    }
+
+    public static function actionButtonAnswer(object $row, string $route) : string {
+        return <<<HTML
+            <div class="btn-group" role="group">
+            <a class="btn btn-white btn-sm" href="{$route}">
+              <i class="bi-eye me-1"></i> Detail
             </a>
         HTML;
     }

@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use App\Helpers\UploadHelper;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Models\Instruction;
 
 class WorksheetController extends Controller
 {
@@ -36,51 +37,50 @@ class WorksheetController extends Controller
     }
 
     public function edit(string $id = null) {
-        $data = null;
         if ($id) {
-            $data = $this->worksheet::findOrFail($id);
+            $data = $this->worksheet::with('instructions')->findOrFail($id);
+        } else {
+            $data = new $this->worksheet;
+            $data->setRelation('instructions', collect());
         }
-        return view($this->view . 'edit', [
-            'data' => $data,
-        ]);
+
+        return view($this->view . 'edit', compact('data'));
     }
 
     public function store(WorksheetRequest $request)
     {
-        DB::beginTransaction();
-        try {
-            $data = $request->has('id')
-                ? Worksheet::findOrFail($request->id)
-                : new Worksheet();
+        $data = $request->filled('id')
+            ? Worksheet::findOrFail($request->id)
+            : new Worksheet();
 
-            
-            $data->fill($request->validated());
+        $data->fill($request->validated());
 
-            $instruction = $request->input('worksheet-trixFields.instruction');
+        if ($request->hasFile('cover')) {
+            if (!empty($data->cover) && Storage::exists('public/'.$data->cover)) {
+                Storage::delete('public/'.$data->cover);
+            }
 
-            $data->instruction = $instruction;
-
-            $data->save();
-
-            DB::commit();
-
-            session()->flash(
-                'alert.worksheet.success',
-                $request->has('id')
-                    ? 'Data kegiatan belajar berhasil diperbarui'
-                    : 'Data kegiatan belajar berhasil ditambahkan'
+            $result = UploadHelper::upload_file(
+                $request->file('cover'),
+                'worksheet/cover',    
+                ['png','jpg','jpeg']  
             );
 
-            return $request->has('id')
-                ? redirect()->route('teacher.worksheet.edit', $data->id)
-                : redirect()->route('teacher.worksheet.index');
-
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            session()->flash('alert.worksheet.error', 'Terjadi kesalahan: ' . $e->getMessage());
-            return back()->withInput();
+            if (!$result['IsError']) {
+                $data->cover = $result['Path'];
+            } else {
+                session()->flash('alert.worksheet.error', $result['Message']);
+                return back()->withInput();
+            }
         }
+
+        $data->save();
+
+        session()->flash('alert.worksheet.success', $request->has('id')? 'Data lembar kerja berhasil diperbarui' : 'Data lembar kerja berhasil ditambahkan');
+
+        return $request->has('id')
+            ? redirect()->route('teacher.worksheet.edit', $data->id)
+            : redirect()->route('teacher.worksheet.index');
     }
 
 

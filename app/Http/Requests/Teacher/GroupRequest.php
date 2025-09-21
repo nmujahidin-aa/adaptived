@@ -26,7 +26,7 @@ class GroupRequest extends FormRequest
             'leader_id' => 'required|exists:users,id',
             'member_id' => 'required|array',
             'member_id.*' => 'exists:users,id',
-            'worksheet_id' => 'required|exists:worksheets,id',
+            'worksheet_id' => 'required|exists:worksheets,id|array',
         ];
     }
 

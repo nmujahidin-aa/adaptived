@@ -96,7 +96,7 @@
                                                 "mode": "image",
                                                 "targetAttr": "src",
                                                 "resetTarget": ".js-file-attach-reset-img",
-                                                "resetImg": "./assets/img/160x160/img1.jpg",
+                                                "resetImg": "./assets/img/160x160/img2.jpg",
                                                 "allowTypes": [".png", ".jpeg", ".jpg"]
                                             }'>
 

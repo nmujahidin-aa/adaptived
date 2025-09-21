@@ -13,20 +13,20 @@
 
     <div class="row g-4">
         @forelse($assesment as $index => $row)
-        <div class="col-md-6 col-lg-3">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-{{$row->icon}} fs-1 text-primary"></i>
-                    <div class="my-3">
-                        <h5 class="card-title mt-3">{{$row->title}}</h5>
-                    </div>
-                    <a href="{{route('assesment.show', $row->id)}}" class="btn btn-sm btn-outline-primary">Lihat</a>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <!-- Card -->
+            <a class="card card-sm card-transition h-100" href="{{ route('assesment.show', $row->id) }}" data-aos="fade-up">
+                <img class="card-img p-2" src="#" alt="Image Description">
+                <div class="card-body">
+                    <div><small><i class="bi bi-{{ $row->variable->icon }}"></i> {{$row->variable->name}}</small></div>
+                    <h4 class="card-title text-inherit mt-2">{{ $row->title }}</h4>
                 </div>
-            </div>
+            </a>
+            <!-- End Card -->
         </div>
         @empty
         <div class="col text-center">
-            <p class="text-muted">Asesmen belum diatur</p>
+            <p class="text-muted">Belum ada Assesment</p>
         </div>
         @endforelse
     </div>

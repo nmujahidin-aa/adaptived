@@ -19,7 +19,9 @@ Route::group(['namespace'=>'App\Http\Controllers', 'middleware' => ['auth']], fu
 
         Route::group(['prefix' => 'worksheet', 'as' => 'worksheet.'], function () {
             Route::get('/', [WorksheetController::class, 'index'])->name('index');
-            Route::get('/show/{id}', [WorksheetController::class, 'show'])->name('show');
+            Route::get('/show/{worksheet_id}/{group_id}', [WorksheetController::class, 'show'])->name('show');
+
+            Route::post('/answer/store/{id}', [WorksheetController::class, 'store'])->name('answer.store');
         });
 
     });

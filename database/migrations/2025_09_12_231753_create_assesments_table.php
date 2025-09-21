@@ -17,8 +17,6 @@ return new class extends Migration
             $table->foreignId('teacher_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('school_id')->nullable()->constrained('schools')->onDelete('cascade');
             $table->foreignId('variable_id')->nullable()->constrained('variables')->onDelete('cascade');
-            $table->text('question')->nullable();
-            $table->enum('type', ['essay', 'short_answer'])->nullable();
             $table->timestamps();
         });
     }

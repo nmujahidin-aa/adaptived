@@ -23,9 +23,6 @@ class AssesmentRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'type' => 'required|in:essay,short_answer',
-            'assesment-trixFields' => 'nullable',
-            'attachment-assesment-trixFields' => 'nullable',
             'variable_id' => 'required|exists:variables,id',
             'school_id' => 'required|exists:schools,id'
         ];
@@ -37,8 +34,6 @@ class AssesmentRequest extends FormRequest
             'title.required' => 'Judul wajib diisi.',
             'title.string' => 'Judul harus berupa teks.',
             'title.max' => 'Judul maksimal 255 karakter.',
-            'type.required' => 'Tipe soal wajib diisi.',
-            'type.in' => 'Tipe soal tidak valid. Pilih antara essay atau short_answer.',
             'variable_id.required' => 'Variabel wajib diisi.',
             'variable_id.exists' => 'Variabel yang dipilih tidak valid.',
             'school_id.required' => 'Sekolah wajib diisi.',

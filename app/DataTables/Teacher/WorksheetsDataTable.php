@@ -72,12 +72,17 @@ class WorksheetsDataTable extends DataTable
                     <span class="badge bg-{$badgeClass}">{$count} Kelompok</span>
                 HTML;
             })
+            ->editColumn('instruction', function($row) {
+                $url = route('teacher.instruction.index', ['worksheet_id' => $row->id]);
+                $count = $row->instructions()->count();
+                return DataTableHelper::actionButtonInstruction($row, $url, $count);
+            })
             ->editColumn('action', function($row) {
                 $url = route('teacher.worksheet.edit', ['id' => $row->id]);
                 $delete = route('teacher.worksheet.single_destroy', ['id' => $row->id]);
                 return DataTableHelper::actionButton($row, $url, $delete);
             })
-            ->rawColumns(['action','school', 'group', 'title', 'checkbox']);
+            ->rawColumns(['action','school', 'group', 'instruction', 'title', 'checkbox']);
     }
 
     /**
@@ -110,6 +115,7 @@ class WorksheetsDataTable extends DataTable
             Column::make('title')->addClass('table-column-ps-0 text-wrap')->title('Nama Kegiatan Belajar')->width('30%'),
             Column::computed('school')->addClass('table-column-ps-0')->title('Institusi')->width('30%'),
             Column::computed('group')->title('Kelompok')->width('20%'),
+            Column::computed('instruction')->title('Instruksi')->width('20%'),
             Column::computed('action')->title('Aksi')->width('20%'),
         ];
     }

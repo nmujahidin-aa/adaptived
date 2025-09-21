@@ -40,35 +40,26 @@ class GroupsDataTable extends DataTable
                 HTML;  
             })
             ->editColumn('worksheet', function($row) {
+                $count = $row->worksheets()->count();
+                $badgeClass = $count === 0 ? 'danger' : 'success';
                 return <<<HTML
-                    <div class="d-flex align-items-center">
-                        <div class="">
-                          <span class="d-block h5 text-bold mb-0" style="text-transform: uppercase;">
-                            {$row->worksheet->title}
-                          </span>
-                        </div>
-                    </div>
-                HTML;  
+                    <span class="badge bg-{$badgeClass}">{$count} Kegiatan Belajar</span>
+                HTML;
             })
             ->editColumn('member', function($row) {
-                // Ambil semua anggota dari relasi members
                 $members = $row->members;
 
-                // Jika tidak ada anggota, kembalikan pesan
                 if ($members->isEmpty()) {
                     return '<span class="badge bg-secondary">Belum ada anggota</span>';
                 }
 
-                // Cari ketua dan anggota lain
                 $leader = $members->firstWhere('pivot.role', 'leader');
                 $teamMembers = $members->filter(function($member) {
                     return $member->pivot->role === 'member';
                 });
 
-                // Mulai HTML dengan grup avatar
                 $html = '<div class="avatar-group avatar-circle">';
 
-                // Tampilkan avatar Ketua (Leader) di paling kiri
                 if ($leader) {
                     $html .= <<<HTML
                         <a class="avatar" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="{$leader->name} (Ketua)">
@@ -77,7 +68,6 @@ class GroupsDataTable extends DataTable
                     HTML;
                 }
 
-                // Tampilkan avatar Anggota (Member) setelah Ketua
                 if ($teamMembers->isNotEmpty()) {
                     foreach ($teamMembers as $member) {
                         $html .= <<<HTML
@@ -88,7 +78,6 @@ class GroupsDataTable extends DataTable
                     }
                 }
 
-                // Tutup div grup avatar
                 $html .= '</div>';
 
                 return $html;

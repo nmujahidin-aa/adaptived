@@ -49,9 +49,12 @@ class AnswersDataTable extends DataTable
             })
             // Perbaikan ada di sini
             ->editColumn('answer', function($row) {
-                // Menggunakan $row->trix('answer') untuk merender konten dari tabel trix_rich_texts
+                $content = strip_tags($row->answer ?? '');
+                $excerpt = strlen($content) > 100 
+                    ? substr($content, 0, 100) . '...' 
+                    : $content;
                 return <<<HTML
-                    <span class="d-block fs-5 text-bold">{!! $row->trix('answer') !!}</span>
+                    <span class="d-block fs-5 text-bold">{$excerpt}</span>
                 HTML;
             })
             ->editColumn('analysis', function($row) {
@@ -65,11 +68,9 @@ class AnswersDataTable extends DataTable
                 HTML;
             })
             ->editColumn('action', function($row) {
-                // Pastikan $row->assesment_id dan $row->id ada sebelum memanggil route()
                 if ($row->assesment_id && $row->id) {
                     $url = route('teacher.answer.show', ['assesment_id' => $row->assesment_id, 'id' => $row->id]);
-                    $delete = route('teacher.answer.single_destroy', ['assesment_id' => $row->assesment_id, 'id' => $row->id]);
-                    return DataTableHelper::actionButton($row, $url, $delete);
+                    return DataTableHelper::actionButtonAnswer($row, $url);
                 }
                 return '';
             })
@@ -83,7 +84,6 @@ class AnswersDataTable extends DataTable
      */
     public function query(Answer $model): QueryBuilder
     {
-        // Gunakan properti yang telah diatur dari controller untuk memfilter data
         $data = $model->newQuery()
             ->with(['user'])
             ->where('assesment_id', $this->assesment_id);
@@ -108,7 +108,7 @@ class AnswersDataTable extends DataTable
         return [
             DataTableHelper::addCheckbox()->width('5%'),
             Column::make('name')->addClass('table-column-ps-0')->title('Siswa')->width('15%'),
-            Column::computed('answer')->addClass('table-column-ps-0')->title('Jawaban')->width('30%'),
+            Column::computed('answer')->addClass('table-column-ps text-wrap')->title('Jawaban')->width('30%'),
             Column::computed('analysis')->addClass('table-column-ps-0')->title('Analisis AI')->width('30%'),
             Column::computed('grade')->title('Nilai')->width('12%'),
             Column::computed('action')->title('Aksi')->width('13%'),
@@ -121,5 +121,19 @@ class AnswersDataTable extends DataTable
     protected function filename(): string
     {
         return 'Answers_' . date('YmdHis');
+    }
+
+    /**
+     * Terima parameter dari controller (agar assesment_id tidak null).
+     */
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            $this->assesment_id = $key['assesment_id'] ?? null;
+        } elseif (is_string($key) && $key === 'assesment_id') {
+            $this->assesment_id = $value;
+        }
+
+        return $this;
     }
 }

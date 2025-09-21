@@ -2,7 +2,7 @@
 
 namespace App\DataTables\Teacher;
 
-use App\Models\Analysis;
+use App\Models\Answ;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;

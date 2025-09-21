@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Teacher;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class WorksheetRequest extends FormRequest
 {
@@ -23,11 +24,9 @@ class WorksheetRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'instruction' => 'nullable',
-            'worksheet-trixFields' => 'nullable',
-            'attachment-worksheet-trixFields' => 'nullable',
             'school_id' => 'required|exists:schools,id',
-            'teacher_id' => 'required|exists:users,id'
+            'teacher_id' => 'required|exists:users,id',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
         ];
     }
 
@@ -39,8 +38,9 @@ class WorksheetRequest extends FormRequest
             'title.max' => 'Judul maksimal 255 karakter.',
             'school_id.required' => 'Sekolah wajib dipilih.',
             'school_id.exists' => 'Sekolah yang dipilih tidak valid.',
-            'teacher_id.required' => 'Guru wajib dipilih.',
-            'teacher_id.exists' => 'Guru yang dipilih tidak valid.',
+            'cover.image' => 'Cover harus berupa file gambar.',
+            'cover.mimes' => 'Cover harus berupa file dengan format: jpeg, png, jpg, gif, svg.',
+            'cover.max' => 'Ukuran cover maksimal 5MB.',
         ];
     }
 }

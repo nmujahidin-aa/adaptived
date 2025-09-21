@@ -11,14 +11,14 @@
 </li>
 
 <li class="nav-item">
-    <a class="nav-link @if(request()->routeIs('teacher.group*')) active @endif" href="{{route('teacher.group.index')}}">
-        <i class="bi-unity dropdown-item-icon"></i> Kelompok Belajar
+    <a class="nav-link @if(request()->routeIs('teacher.worksheet*')) active @endif" href="{{route('teacher.worksheet.index')}}">
+        <i class="bi-laptop-fill dropdown-item-icon"></i> LKPD
     </a>
 </li>
 
 <li class="nav-item">
-    <a class="nav-link @if(request()->routeIs('teacher.worksheet*')) active @endif" href="{{route('teacher.worksheet.index')}}">
-        <i class="bi-laptop-fill dropdown-item-icon"></i> LKPD
+    <a class="nav-link @if(request()->routeIs('teacher.group*')) active @endif" href="{{route('teacher.group.index')}}">
+        <i class="bi-unity dropdown-item-icon"></i> Kelompok Belajar
     </a>
 </li>
 

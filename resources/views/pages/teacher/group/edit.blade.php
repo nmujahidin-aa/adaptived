@@ -96,25 +96,24 @@
                         </div>
 
                         <div class="row mb-4">
-                            <label for="worksheet_id" class="col-sm-4 col-md-3 col-form-label form-label">Kegiatan Belajar <span class="text-danger">*</span></label>
+                            <label for="worksheet_id" class="col-sm-4 col-md-3 col-form-label form-label">
+                                Kegiatan Belajar <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-8 col-md-9">
                                 <div class="tom-select-custom">
-                                    <select class="js-select form-select w-100" name="worksheet_id" data-hs-tom-select-options='{
-                                            "searchInDropdown": true,
-                                            "dropdownWidth": "100%"
+                                    <select class="js-select form-select w-100" 
+                                            name="worksheet_id[]" 
+                                            multiple
+                                            data-hs-tom-select-options='{
+                                                "searchInDropdown": true,
+                                                "dropdownWidth": "100%"
                                             }'>
+
                                         @foreach($worksheets as $index => $row)
                                             <option value="{{ $row->id }}"
-                                                @if(old('worksheet_id', $data->worksheet_id ?? '') == $row->id) selected @endif
-                                                data-option-template='
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="">
-                                                            <span class="d-block h6 text-bold mb-0">
-                                                                {{ $row->title }}
-                                                            </span>
-                                                        </div>
-                                                    </div>'
-                                            >{{ $row->name }}</option>
+                                                @if(collect(old('worksheet_id', optional($data)->worksheets?->pluck('id')->toArray() ?? []))->contains($row->id)) selected @endif>
+                                                {{ $row->title }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -127,61 +126,61 @@
                         </div>
                         
                         <div class="row mb-4">
-                            <label for="leader_id" class="col-sm-4 col-md-3 col-form-label form-label">Ketua Kelompok <span class="text-danger">*</span></label>
+                            <label for="leader_id" class="col-sm-4 col-md-3 col-form-label form-label">
+                                Ketua Kelompok <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-8 col-md-9">
                                 <div class="tom-select-custom">
-                                    <select class="js-select form-select w-100" name="leader_id" data-hs-tom-select-options='{
-                                            "searchInDropdown": true,
-                                            "dropdownWidth": "100%"
-                                            }'>
-                                        @foreach($students as $index => $row)
+                                    @php
+                                        $leaderId = old('leader_id', $data?->members->where('pivot.role', 'leader')->first()?->id ?? '');
+                                    @endphp
+                                    <select class="js-select form-select w-100" name="leader_id"
+                                        data-hs-tom-select-options='{"searchInDropdown": true,"dropdownWidth": "100%"}'>
+                                        @foreach($students as $row)
                                             <option value="{{ $row->id }}"
-                                                @if(old('leader_id', $data->leader_id ?? '') == $row->id) selected @endif
+                                                {{ $leaderId == $row->id ? 'selected' : '' }}
                                                 data-option-template='
                                                     <div class="d-flex align-items-center">
                                                         <div class="">
-                                                            <span class="d-block h6 text-bold mb-0">
-                                                                {{ $row->name }}
-                                                            </span>
+                                                            <span class="d-block h6 text-bold mb-0">{{ $row->name }}</span>
                                                         </div>
-                                                    </div>'
-                                            >{{ $row->name }}</option>
+                                                    </div>'>
+                                                {{ $row->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="invalid-feedback">
                                     @error('leader_id')
-                                    {{ $message }}
+                                        {{ $message }}
                                     @enderror
                                 </div>
                             </div>
                         </div>
 
                         <div class="row mb-4">
-                            <label for="member_id" class="col-sm-4 col-md-3 col-form-label form-label">Anggota Kelompok <span class="text-danger">*</span></label>
+                            <label for="member_id" class="col-sm-4 col-md-3 col-form-label form-label">
+                                Anggota Kelompok <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-8 col-md-9">
                                 <div class="tom-select-custom">
-                                    {{-- Tambahkan id untuk TomSelect --}}
-                                    <select id="member_select" class="js-select form-select w-100 @error('member_id') is-invalid @enderror" name="member_id[]" multiple data-hs-tom-select-options='{
-                                        "searchInDropdown": true,
-                                        "dropdownWidth": "100%"
-                                    }'>
-                                        {{-- Dapatkan ID anggota yang sudah ada atau dari old() --}}
-                                        @php
-                                            $selectedMembers = old('member_id', $data?->members->pluck('user_id')->toArray() ?? []);
-                                        @endphp
-                                        @foreach($students as $index => $row)
+                                    @php
+                                        $selectedMembers = old('member_id', $data?->members->pluck('id')->toArray() ?? []);
+                                    @endphp
+                                    <select id="member_select" class="js-select form-select w-100 @error('member_id') is-invalid @enderror"
+                                        name="member_id[]" multiple
+                                        data-hs-tom-select-options='{"searchInDropdown": true,"dropdownWidth": "100%"}'>
+                                        @foreach($students as $row)
                                             <option value="{{ $row->id }}"
-                                                @if(in_array($row->id, $selectedMembers)) selected @endif
+                                                {{ in_array($row->id, $selectedMembers) ? 'selected' : '' }}
                                                 data-option-template='
                                                     <div class="d-flex align-items-center">
                                                         <div class="">
-                                                            <span class="d-block h6 text-bold mb-0">
-                                                                {{ $row->name }}
-                                                            </span>
+                                                            <span class="d-block h6 text-bold mb-0">{{ $row->name }}</span>
                                                         </div>
-                                                    </div>'
-                                            >{{ $row->name }}</option>
+                                                    </div>'>
+                                                {{ $row->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback">

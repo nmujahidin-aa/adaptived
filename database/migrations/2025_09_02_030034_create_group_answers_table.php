@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('group_id')->nullable()->constrained()->onDelete(action: 'cascade');
             $table->foreignId('worksheet_id')->nullable()->constrained()->onDelete(action: 'cascade');
+            $table->foreignId('worksheet_instruction_id')->nullable()->constrained()->onDelete(action: 'cascade');
             $table->text('answer')->nullable();
             $table->text('comment')->nullable();
             $table->timestamps();

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\DataTables\Teacher\AnswersDataTable;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Answer;
+use App\Models\Assesment;
 use Illuminate\Http\Response;
 
 class AnswerController extends Controller
@@ -23,14 +24,17 @@ class AnswerController extends Controller
 
     public function index(AnswersDataTable $dataTable, $assesment_id)
     {
-        return $dataTable->with('assesment_id', $assesment_id)->render($this->view.'index', [
+        $assesment_count = Answer::where('assesment_id', $assesment_id)->count();
+        return $dataTable->with(['assesment_id' => $assesment_id])
+        ->render($this->view.'index', [
             'assesment_id' => $assesment_id,
+            'assesment_count' => $assesment_count,
         ]);
     }
 
     public function show($assesment_id, $id)
     {
-        $assesment = Answer::findOrFail($assesment_id);
+        $assesment = Assesment::findOrFail($assesment_id);
         $data = Answer::findOrFail($id);
 
         return view($this->view . 'show', [

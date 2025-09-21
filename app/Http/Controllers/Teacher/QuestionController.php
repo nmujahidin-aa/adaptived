@@ -8,8 +8,9 @@ use App\Models\Question;
 use App\Models\Variable;
 use App\Helpers\HttpResponse;
 use Illuminate\Http\Response;
-use App\DataTables\QuestionsDataTable;
 use App\Http\Requests\Teacher\QuestionRequest;
+use App\DataTables\Teacher\QuestionsDataTable;
+use Illuminate\Support\Facades\DB;  
 
 class QuestionController extends Controller
 {
@@ -21,53 +22,60 @@ class QuestionController extends Controller
         $this->question = new Question();
     }
 
-    public function index($variable_id, QuestionsDataTable $dataTable) {
-        $variable = Variable::findOrFail($variable_id);
-        $questions = $this->question->where('assesment_variable_id', $variable_id)->get();
-
-        $question_count = $questions->count();
-
-        return $dataTable->render($this->view . 'index', [
-            'variable' => $variable,
-            'questions' => $questions,
-            'question_count' => $question_count
+    public function index(QuestionsDataTable $dataTable, $assesment_id) {
+        $question_count = Question::where('assesment_id', $assesment_id)->count();
+        return $dataTable->with(['assesment_id' => $assesment_id])
+        ->render($this->view.'index', [
+            'assesment_id' => $assesment_id,
+            'question_count' => $question_count,
         ]);
     }
 
-    public function edit(string $variable_id, string $id = null) {
-        $variable = Variable::findOrFail($variable_id);
+    public function edit($assesment_id, string $id = null) {
         if ($id) {
-            $question = $this->question->findOrFail($id);
+            $data = Question::findOrFail($id);
+        } else {
+            $data = new Question();
+            $data->assesment_id = $assesment_id;
         }
+
         return view($this->view . 'edit', [
-            'variable' => $variable,
-            'question' => $question ?? null
+            'data' => $data,
+            'assesment_id' => $assesment_id,
         ]);
     }
 
     public function store(QuestionRequest $request) {
-        $variable_id = $request->validated()['assesment_variable_id'];
-        $variable = Variable::findOrFail($variable_id);
-
-        if ($request->has('id') && $request->id) {
-            $question = $this->question->findOrFail($request->id);
-            $question->update($request->validated());
+        DB::beginTransaction();
+        try {
+            $data = $request->filled('id')
+                ? Question::findOrFail($request->id)
+                : new Question();
             
-            session()->flash('alert.assesment.question.success', 'Data soal berhasil diperbarui');
+            $data->fill($request->validated());
 
-            return redirect()->route('teacher.assesment.question.edit', [
-                'variable_id' => $variable_id, 
-                'question' => $question->id
-            ]);
-        } 
-        else {
-            $newQuestion = $this->question->create($request->validated());
+            $data->question = $request->input('question-trixFields.question', $data->question);
 
-            session()->flash('alert.assesment.question.success', 'Data soal berhasil ditambahkan');
+            $data->save();
 
-            return redirect()->route('teacher.assesment.question.index', [
-                'variable_id' => $variable_id
-            ]);
+            DB::commit();
+
+            session()->flash(
+                'alert.question.success',
+                $request->has('id')
+                    ? 'Data pertanyaan berhasil diperbarui'
+                    : 'Data pertanyaan berhasil ditambahkan'
+            );
+
+            return $request->has('id')
+                ? redirect()->route('teacher.question.edit', ['assesment_id' => $data->assesment_id, 'id' => $data->id])
+                : redirect()->route('teacher.question.index', ['assesment_id' => $data->assesment_id]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            session()->flash('alert.question.error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->withInput();
         }
     }
 
@@ -86,25 +94,25 @@ class QuestionController extends Controller
         }
 
         foreach ($ids as $id) {
-            $assesment = Variable::find($id);
-            if (!$assesment) {
+            $question = Question::find($id);
+            if (!$question) {
                 continue;
             }
-            $assesment->delete();
+            $question->delete();
         }
         return HttpResponse::success(Response::HTTP_OK, 'Question deleted successfully');
     }
 
     public function single_destroy() {
-        $question = $this->question->findOrFail(request()->route('id'));
+        $question = Question::findOrFail(request()->route('id'));
 
         if (!$question) {
             return HttpResponse::fail(Response::HTTP_NOT_FOUND, 'Question tidak ditemukan atau sudah dihapus');
         }
         $question->delete();
-        session()->flash('alert.assesment.question.success', 'Question berhasil dihapus');
+        session()->flash('alert.question.success', 'Question berhasil dihapus');
         return HttpResponse::success(Response::HTTP_OK, 'Question berhasil dihapus', [
-            'redirect' => route('teacher.assesment.question.index')
+            'redirect' => route('teacher.question.index', ['assesment_id' => $question->assesment_id])
         ]);
-    }
+    } 
 }

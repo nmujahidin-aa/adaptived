@@ -130,48 +130,6 @@
                             </div>
                         </div>
 
-                        <div class="row mb-4">
-                            <label for="gender" class="col-sm-4 col-md-3 col-form-label form-label">Tipe Soal <span class="text-danger">*</span></label>
-                            <div class="col-sm-8 col-md-9">
-                                <div class="input-group input-group-sm-vertical">
-                                <!-- Radio Check -->
-                                <label class="form-control" for="essay">
-                                    <span class="form-check">
-                                    <input type="radio" class="form-check-input" name="type" value="essay" id="essay" {{ old('type', isset($data) ? $data->type : '') == 'essay' ? 'checked' : '' }}>
-                                    <span class="form-check-label">Essay</span>
-                                    </span>
-                                </label>
-                                <!-- End Radio Check -->
-
-                                <!-- Radio Check -->
-                                <label class="form-control" for="short_answer">
-                                    <span class="form-check">
-                                    <input type="radio" class="form-check-input" name="type" value="short_answer" id="short_answer" {{ old('type', isset($data) ? $data->type : '') == 'short_answer' ? 'checked' : '' }}>
-                                    <span class="form-check-label">Jawaban Singkat</span>
-                                    </span>
-                                </label>
-                                <!-- End Radio Check -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <label for="question" class="col-sm-4 col-md-3 col-form-label form-label">
-                                Pertanyaan <span class="text-danger">*</span>
-                                <i class="bi-question-circle text-body ms-1"
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                title="Contoh: bar-chart-line untuk Genap 2024/2025"></i>
-                            </label>
-                            <div class="col-sm-8 col-md-9">
-                                @trix($data, 'question', ['hideTools' => ['file-tools'], 'class' => $errors->has('question') ? 'is-invalid' : ''])
-                                <div class="invalid-feedback">
-                                    @error('question')
-                                        {{ $message }}
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-end gap-2">

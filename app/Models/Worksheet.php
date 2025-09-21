@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Te7aHoudini\LaravelTrix\Traits\HasTrixRichText;
 
 class Worksheet extends Model
 {
-    use HasTrixRichText;
     protected $guarded = [];
 
     public function school()
@@ -17,10 +15,15 @@ class Worksheet extends Model
 
     public function groups()
     {
-        return $this->hasMany(Group::class, 'worksheet_id');
+        return $this->belongsToMany(Group::class, 'group_worksheets');
     }
 
     public function user(){
         return $this->hasMany(Worksheet::class, 'teacher_id', 'id');
+    }
+
+    public function instructions()
+    {
+        return $this->hasMany(Instruction::class, 'worksheet_id');
     }
 }
