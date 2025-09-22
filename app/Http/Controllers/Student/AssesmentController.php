@@ -29,17 +29,26 @@ class AssesmentController extends Controller
         ]);
     }
 
-    public function show($id) {
-        $assesment = Assesment::findOrFail($id);
-        $data = \App\Models\Answer::where('assesment_id', $assesment->id)
-            ->where('user_id', Auth::id())
-            ->first();
+    public function show($id)
+    {
+        $user = Auth::user();
 
-        return view($this->view . 'show', [
-            'assesment' => $assesment,
-            'data' => $data
-        ]);
+        $assesment = Assesment::findOrFail($id);
+
+        $assesment->load(['questions' => function($q) use ($user) {
+            $q->with(['answers' => function($q2) use ($user) {
+                $q2->where('user_id', $user->id);
+            }]);
+        }]);
+        $questions = $assesment->questions->map(function($question) {
+            $question->user_answer = $question->answers->first();
+            return $question;
+        });
+
+        return view($this->view . 'show', compact('assesment', 'questions'));
     }
+
+    
 
     public function storeAnswer(AnswerRequest $request, $id)
     {

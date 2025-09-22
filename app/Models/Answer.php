@@ -9,7 +9,7 @@ class Answer extends Model
 {
     use HasTrixRichText;
 
-    protected $table = 'group_answers';
+    protected $table = 'answers';
     protected $guarded = [];
 
     public function assesment(){
