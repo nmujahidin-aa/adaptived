@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Student\AssesmentController;
 use App\Http\Controllers\Student\LearningResourceController;
-use App\Http\Controllers\Student\WorkSheetController;
+use App\Http\Controllers\Student\WorksheetController;
 
 
 
