@@ -19,6 +19,6 @@ class Instruction extends Model
 
     public function answers()
     {
-        return $this->hasMany(Answer::class, 'worksheet_instruction_id');
+        return $this->hasMany(GroupAnswer::class, 'worksheet_instruction_id');
     }
 }

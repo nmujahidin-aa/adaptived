@@ -56,7 +56,7 @@
                             <input type="hidden" name="assesment_id" value="{{ $assesment->id }}">
                             <input type="hidden" name="question_id" value="{{ $question->id }}">
                             
-                            @if($question->user_answer)
+                            @if(isset($question->user_answer))
                                 <input type="hidden" name="id" value="{{ $question->user_answer->id }}">
                             @endif
 
@@ -69,7 +69,7 @@
                             <div class="text-end mt-3">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="bi bi-send-check me-1"></i>
-                                    {{ $question->user_answer ? 'Update Jawaban' : 'Kirim Jawaban' }}
+                                    {{ isset($question->user_answer) ? 'Update Jawaban' : 'Kirim Jawaban' }}
                                 </button>
                             </div>
                         </form>

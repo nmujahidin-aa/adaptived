@@ -32,9 +32,7 @@ class AssesmentController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-
         $assesment = Assesment::findOrFail($id);
-
         $assesment->load(['questions' => function($q) use ($user) {
             $q->with(['answers' => function($q2) use ($user) {
                 $q2->where('user_id', $user->id);
@@ -50,35 +48,28 @@ class AssesmentController extends Controller
 
     
 
-    public function storeAnswer(AnswerRequest $request, $id)
+    public function store(AnswerRequest $request, $id)
     {
         try {
-            $validated = $request->validated();
+            $data = $request->filled('id')
+                ? Answer::findOrFail($request->id)
+                : new Answer();
 
-            $answerText = $request->input('answer');
+            $data->fill($request->validated());
 
-            $answer = Answer::updateOrCreate(
-                [
-                    'assesment_id' => $validated['assesment_id'],
-                    'user_id'      => $validated['user_id'],
-                ],
-                [
-                    'answer' => $answerText,
-                ]
-            );
+            $data->user_id = Auth::id();
+            $data->save();
 
             session()->flash(
-                'alert.assesment.success',
+                'alert.answer.success',
                 $request->has('id')
                     ? 'Jawaban berhasil diperbarui'
                     : 'Jawaban berhasil dikirim'
             );
-
-            return redirect()->route('assesment.show', $id);
-
+            return back();
         } catch (\Throwable $e) {
             report($e);
-            session()->flash('alert.assesment.error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('alert.answer.error', 'Terjadi kesalahan: ' . $e->getMessage());
             return back()->withInput();
         }
     }

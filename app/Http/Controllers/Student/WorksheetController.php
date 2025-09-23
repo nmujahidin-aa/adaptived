@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Student\WorksheetAnswerRequest;
+use App\Http\Requests\Student\GroupAnswerRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Worksheet;
 use Illuminate\Support\Facades\DB;
-use App\Models\Answer;
+use App\Models\GroupAnswer;
 
 class WorksheetController extends Controller
 {
@@ -64,19 +64,16 @@ class WorksheetController extends Controller
         return view($this->view . 'show', compact('worksheet', 'group', 'instructions'));
     }
 
-    public function store(WorksheetAnswerRequest $request)
+    public function store(GroupAnswerRequest $request)
     {
         DB::beginTransaction();
 
         try {
             $data = $request->filled('id')
-                ? Answer::findOrFail($request->id)
-                : new Answer();
+                ? GroupAnswer::findOrFail($request->id)
+                : new GroupAnswer();
 
             $data->fill($request->validated());
-
-            $data->answer = $request->input('answer-trixFields.answer', $data->answer);
-
             $data->save();
 
             DB::commit();

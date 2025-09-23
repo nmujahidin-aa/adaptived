@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'ai' => [
+        'endpoint' => env('AI_API_ENDPOINT', 'https://ark.ap-southeast.bytepluses.com'),
+        'token' => env('AI_API_TOKEN'),
+    ],
+
 ];

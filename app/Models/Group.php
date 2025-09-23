@@ -42,7 +42,7 @@ class Group extends Model
 
     public function answers()
     {
-        return $this->hasMany(Answer::class, 'group_id', 'id');
+        return $this->hasMany(GroupAnswer::class, 'group_id', 'id');
     }
 
     public function getStatusAttribute()

@@ -48,7 +48,9 @@ Route::group(["middleware"=>"auth"], function(){
     
     Route::group(['prefix' => 'answer', 'as' => 'answer.'], function () {
         Route::get('/{assesment_id}', [AnswerController::class, 'index'])->name('index');
+        Route::post('/{assesment_id}/analyze/{id}', [AnswerController::class, 'analyze'])->name('analyze');
         Route::get('/{assesment_id}/show/{id}', [AnswerController::class, 'show'])->name('show');
         Route::delete('/{assesment_id}/{id}', [AnswerController::class, 'single_destroy'])->name('single_destroy');
+
     });
 });

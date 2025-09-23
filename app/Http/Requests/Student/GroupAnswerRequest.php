@@ -4,7 +4,7 @@ namespace App\Http\Requests\Student;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AnswerRequest extends FormRequest
+class GroupAnswerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,11 @@ class AnswerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'assesment_id' => 'required|exists:assesments,id',
-            'question_id'  => 'required|exists:questions,id',
-            'answer-trixFields.answer' => 'nullable|string',
-            'attachment-answer-trixFields' => 'nullable',
+            'group_id' => 'required|exists:groups,id',
+            'worksheet_id' => 'required|exists:worksheets,id',
+            'worksheet_instruction_id'  => 'required|exists:worksheet_instructions,id',
+            'groupanswer-trixFields.groupanswer' => 'nullable|string',
+            'attachment-groupanswer-trixFields' => 'nullable',
         ];
     }
 }

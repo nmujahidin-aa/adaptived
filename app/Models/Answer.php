@@ -12,6 +12,11 @@ class Answer extends Model
     protected $table = 'answers';
     protected $guarded = [];
 
+    protected $trixFields = [
+        'answer',
+        'attachment',
+    ];
+
     public function assesment(){
         return $this->belongsTo(Assesment::class, 'assesment_id');
     }

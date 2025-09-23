@@ -31,6 +31,6 @@ Route::group(['namespace'=>'App\Http\Controllers', 'middleware' => ['auth']], fu
         Route::get('/', [AssesmentController::class, 'index'])->name('index');
         Route::get('/show/{id}', [AssesmentController::class, 'show'])->name('show');
 
-        Route::post('/answer/store/{id}', [AssesmentController::class, 'storeAnswer'])->name('answer.store');
+        Route::post('/answer/store/{id}', [AssesmentController::class, 'store'])->name('answer.store');
     });
 });

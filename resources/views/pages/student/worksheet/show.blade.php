@@ -71,8 +71,8 @@
                             @endif
 
                             {{-- Trix editor --}}
-                            @trix($instruction->group_answer ?? new \App\Models\Answer, 'answer', [
-                                'class' => $errors->has('answer') ? 'is-invalid' : ''
+                            @trix($instruction->group_answer ?? new \App\Models\GroupAnswer, 'groupanswer', [
+                                'class' => $errors->has('groupanswer') ? 'is-invalid' : ''
                             ])
 
                             <div class="text-end mt-3">

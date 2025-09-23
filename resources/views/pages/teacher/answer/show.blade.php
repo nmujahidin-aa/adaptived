@@ -58,7 +58,13 @@
                         </div>
                     </div>
                     <div class="rich-text-content">
-                        <h1>Analisis Jawaban Siswa</h1>
+                        <form action="{{ route('teacher.answer.analyze', ['assesment_id' => $assesment->id, 'id' => $data->id]) }}" method="POST">
+                            @csrf
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Analisis Jawaban</button>
+                            </div>
+                        </form>
+                        <!-- <h1>Analisis Jawaban Siswa</h1>
                         <p>Analisis terhadap jawaban siswa menunjukkan pemahaman yang cukup baik mengenai topik yang dibahas. Siswa mampu mengidentifikasi pertanyaan yang relevan berdasarkan teks yang diberikan, khususnya terkait dengan <strong>perubahan komponen ekosistem</strong> akibat pencemaran pestisida.</p>
 
                         <hr>
@@ -103,7 +109,7 @@
                                 <li><strong>Kesesuaian dengan Instruksi (20 poin):</strong> Siswa mengajukan tiga pertanyaan, padahal instruksi hanya meminta dua. Ini menunjukkan ketidakakuratan dalam mengikuti perintah, meskipun pertanyaan tambahan tersebut berkualitas.</li>
                                 <li><strong>Struktur dan Kejelasan (10 poin):</strong> Pertanyaan dirumuskan dengan jelas dan mudah dipahami.</li>
                             </ul>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
