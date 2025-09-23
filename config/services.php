@@ -35,9 +35,10 @@ return [
         ],
     ],
 
-    'ai' => [
-        'endpoint' => env('AI_API_ENDPOINT', 'https://ark.ap-southeast.bytepluses.com'),
-        'token' => env('AI_API_TOKEN'),
+    'byteplus' => [
+        'base_url' => env('BYTEPLUS_BASE_URL', 'https://ark.ap-southeast.bytepluses.com'),
+        'api_key' => env('BYTEPLUS_API_KEY'),
+        'model' => env('ARK_MODEL_NAME', 'ep-20250830093230-swczp'),
     ],
 
 ];
