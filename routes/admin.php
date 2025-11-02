@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\VariableController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
-|--------------------------------------------------------------------------
+|-------------------------------------------------------------------------- 
 |
 | Route ini telah didaftarkan dalam **RouteServiceProvider** dengan konfigurasi khusus sebagai berikut:
 | - **Prefix**: `admin`

@@ -9,6 +9,7 @@ use App\Http\Controllers\Teacher\LearningResourceController;
 use App\Http\Controllers\Teacher\GroupController;
 use App\Http\Controllers\Teacher\WorksheetController;
 use App\Http\Controllers\Teacher\AnswerController;
+use App\Http\Controllers\Teacher\GroupAnswerController;
 use App\Http\Controllers\Teacher\InstructionController;
 use App\Models\Instruction;
 
@@ -52,5 +53,11 @@ Route::group(["middleware"=>"auth"], function(){
         Route::get('/{assesment_id}/show/{id}', [AnswerController::class, 'show'])->name('show');
         Route::delete('/{assesment_id}/{id}', [AnswerController::class, 'single_destroy'])->name('single_destroy');
 
+    });
+
+    Route::group(['prefix' => 'worksheet-group-answer', 'as' => 'worksheet-group-answer.'], function () {
+        Route::get('/{worksheet_id}', [GroupAnswerController::class, 'index'])->name('index');
+        Route::get('/{worksheet_id}/show/{group_id}', [GroupAnswerController::class, 'show'])->name('show');
+        Route::post('/{worksheet_id}/grade/{group_id}', [GroupAnswerController::class, 'grade'])->name('grade');
     });
 });

@@ -39,8 +39,8 @@
                             <i class="bi-patch-question-fill"></i> <span class="fw-semibold">Pertanyaan</span>
                         </div>
                     </div>
-                    <div class="rich-text-content">
-                        {!! $assesment->question !!}
+                    <div class="rich-text-content pb-3 px-3">  
+                        {!! $data->question->question !!}
                     </div>
 
                     <div class="alert alert-soft-success" role="alert">
@@ -48,8 +48,8 @@
                             <i class="bi-patch-question-fill"></i> <span class="fw-semibold">Jawaban {{ $data->user->name }}</span>
                         </div>
                     </div>
-                    <div class="rich-text-content">
-                        {!! $data->answer !!}
+                    <div class="rich-text-content pb-3 px-3">
+                        {!! $data->trixRender('answer') !!}
                     </div>
 
                     <div class="alert alert-dark" role="alert">
@@ -57,7 +57,7 @@
                             <i class="bi-patch-question-fill"></i> <span class="fw-semibold">Analisis AI</span>
                         </div>
                     </div>
-                    <div class="rich-text-content">
+                    <div class="rich-text-content pb-3 px-3">
                         <form action="{{ route('teacher.answer.analyze', ['assesment_id' => $assesment->id, 'id' => $data->id]) }}" method="POST">
                             @csrf
                             <div class="text-center">

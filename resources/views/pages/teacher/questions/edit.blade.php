@@ -118,7 +118,7 @@
                                 title="Contoh: bar-chart-line untuk Genap 2024/2025"></i>
                             </label>
                             <div class="col-sm-8 col-md-9">
-                                @trix($data, 'question', ['hideTools' => ['file-tools'], 'class' => $errors->has('question') ? 'is-invalid' : ''])
+                                @trix($data, 'question', ['class' => $errors->has('question') ? 'is-invalid' : ''])
                                 <div class="invalid-feedback">
                                     @error('question')
                                         {{ $message }}

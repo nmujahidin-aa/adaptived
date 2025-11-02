@@ -24,6 +24,7 @@ class GroupAnswerRequest extends FormRequest
         return [
             'group_id' => 'required|exists:groups,id',
             'worksheet_id' => 'required|exists:worksheets,id',
+            'answer' => 'nullable|string',
             'worksheet_instruction_id'  => 'required|exists:worksheet_instructions,id',
             'groupanswer-trixFields.groupanswer' => 'nullable|string',
             'attachment-groupanswer-trixFields' => 'nullable',

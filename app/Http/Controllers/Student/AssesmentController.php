@@ -46,19 +46,20 @@ class AssesmentController extends Controller
         return view($this->view . 'show', compact('assesment', 'questions'));
     }
 
-    
-
-    public function store(AnswerRequest $request, $id)
-    {
+    public function store(AnswerRequest $request, $id) {
+        DB::beginTransaction();
         try {
             $data = $request->filled('id')
                 ? Answer::findOrFail($request->id)
                 : new Answer();
-
+            
             $data->fill($request->validated());
-
             $data->user_id = Auth::id();
+            $data->answer = $request->input('answer-trixFields.answer', $data->answer);
+
             $data->save();
+
+            DB::commit();
 
             session()->flash(
                 'alert.answer.success',
@@ -68,6 +69,7 @@ class AssesmentController extends Controller
             );
             return back();
         } catch (\Throwable $e) {
+            DB::rollBack();
             report($e);
             session()->flash('alert.answer.error', 'Terjadi kesalahan: ' . $e->getMessage());
             return back()->withInput();

@@ -77,12 +77,21 @@ class WorksheetsDataTable extends DataTable
                 $count = $row->instructions()->count();
                 return DataTableHelper::actionButtonInstruction($row, $url, $count);
             })
+            ->editColumn('answer', function($row) {
+                $url = route('teacher.worksheet-group-answer.index', ['worksheet_id' => $row->id]);
+
+                $count = $row->groupWorksheets()
+                    ->where('worksheet_id', $row->id)
+                    ->get(['group_id', 'worksheet_id'])
+                    ->count();
+                return DataTableHelper::actionButtonGroupAnswer($row, $url, $count);
+            })
             ->editColumn('action', function($row) {
                 $url = route('teacher.worksheet.edit', ['id' => $row->id]);
                 $delete = route('teacher.worksheet.single_destroy', ['id' => $row->id]);
                 return DataTableHelper::actionButton($row, $url, $delete);
             })
-            ->rawColumns(['action','school', 'group', 'instruction', 'title', 'checkbox']);
+            ->rawColumns(['action','school', 'group', 'instruction', 'answer', 'title', 'checkbox']);
     }
 
     /**
@@ -96,7 +105,7 @@ class WorksheetsDataTable extends DataTable
         return $model->newQuery()->where('school_id', $teacher->school_id);
     }
 
-    /**
+    /** 
      * Optional method if you want to use the html builder.
      */
     public function html(): HtmlBuilder
@@ -116,6 +125,7 @@ class WorksheetsDataTable extends DataTable
             Column::computed('school')->addClass('table-column-ps-0')->title('Institusi')->width('30%'),
             Column::computed('group')->title('Kelompok')->width('20%'),
             Column::computed('instruction')->title('Instruksi')->width('20%'),
+            Column::computed('answer')->title('Jawaban')->width('20%'),
             Column::computed('action')->title('Aksi')->width('20%'),
         ];
     }

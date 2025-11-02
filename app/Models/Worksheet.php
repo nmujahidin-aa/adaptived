@@ -26,4 +26,14 @@ class Worksheet extends Model
     {
         return $this->hasMany(Instruction::class, 'worksheet_id');
     }
+
+    public function groupWorksheets()
+    {
+        return $this->hasMany(GroupWorksheet::class, 'worksheet_id');
+    }
+
+    public function groupAnswers()
+    {
+        return $this->hasMany(GroupAnswer::class, 'worksheet_id');
+    }
 }

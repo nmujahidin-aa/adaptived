@@ -25,12 +25,13 @@ class Answer extends Model
         return $this->belongsTo(User::class, 'user_id');
     }  
 
-    public function trix(){
-        //
+    public function question(){
+        return $this->belongsTo(Question::class, 'question_id');
     }
 
     public function instruction()
     {
         return $this->belongsTo(Instruction::class, 'worksheet_instruction_id');
     }
+
 }

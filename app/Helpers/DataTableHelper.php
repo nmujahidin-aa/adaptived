@@ -460,6 +460,15 @@ class DataTableHelper
         HTML;
     }
 
+    public static function actionButtonGroupAnswer(object $row, string $route, string $count) : string {
+        return <<<HTML
+            <div class="btn-group" role="group">
+            <a class="btn btn-white btn-sm" href="{$route}">
+              <i class="bi-eye me-1"></i> {$count} Kelompok
+            </a>
+        HTML;
+    }
+
     public static function actionButtonAnswer(object $row, string $route) : string {
         return <<<HTML
             <div class="btn-group" role="group">
