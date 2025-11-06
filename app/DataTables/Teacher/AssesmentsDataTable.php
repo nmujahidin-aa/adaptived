@@ -13,6 +13,7 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use App\Helpers\DataTableHelper;
+use Illuminate\Support\Facades\Auth;
 
 class AssesmentsDataTable extends DataTable
 {
@@ -68,7 +69,7 @@ class AssesmentsDataTable extends DataTable
      */
     public function query(Assesment $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->where('school_id', Auth::user()->school_id)->newQuery();
     }
 
     /**

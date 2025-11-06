@@ -74,7 +74,6 @@ class WorksheetController extends Controller
                 : new GroupAnswer();
 
             $data->fill($request->validated());
-            dd($data);
             $data->save();
 
             DB::commit();

@@ -98,7 +98,7 @@ class GroupsDataTable extends DataTable
      */
     public function query(Group $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->where('school_id', Auth::user()->school_id)->newQuery();
     }
 
     /**
