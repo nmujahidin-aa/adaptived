@@ -29,7 +29,7 @@ class AnswersDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('checkbox', function ($row) {
-                return DataTableHelper::checkbox($row, $row->name);
+                return DataTableHelper::checkbox($row, $row->answer);
             })
             ->editColumn('name', function($row) {
                 $url = route('teacher.answer.show', ['assesment_id' => $row->assesment_id, 'id' => $row->id]);
@@ -107,7 +107,7 @@ class AnswersDataTable extends DataTable
     {
         return [
             DataTableHelper::addCheckbox()->width('5%'),
-            Column::make('name')->addClass('table-column-ps-0')->title('Siswa')->width('15%'),
+            Column::computed('name')->addClass('table-column-ps-0')->title('Siswa')->width('15%'),
             Column::computed('answer')->addClass('table-column-ps text-wrap')->title('Jawaban')->width('30%'),
             Column::computed('analysis')->addClass('table-column-ps-0')->title('Analisis AI')->width('30%'),
             Column::computed('grade')->title('Nilai')->width('12%'),

@@ -268,7 +268,7 @@ class DataTableHelper
                                         $('#modalBody').html('');
                                         $('#modalErrorDataTable').modal('show');
                                         $('#modalTitle').text('Terjadi Kesalahan');
-                                        $('#modalBody').append('<p class="mb-0">Mohon maaf saat ini sedang ada sedikit kendala. Mungkin ini hanya kesalahan sementara, silahkan coba lakukan refresh halaman. Jika hal ini terjadi lagi, silakan untuk menghubungi admin Fakultas.</p>');
+                                        $('#modalBody').append('<p class="mb-0">Mohon maaf saat ini sedang ada sedikit kendala. Mungkin ini hanya kesalahan sementara, silahkan coba lakukan refresh halaman. Jika hal ini terjadi lagi, silakan untuk menghubungi admin.</p>');
                                         if (errorID != '') {
                                             $('#modalBody').append('<p class="mt-3"><small>ID Kesalahan: ' + errorID + '</small></p>');
                                         }
@@ -278,7 +278,7 @@ class DataTableHelper
                                         $('#modalBody').html('');
                                         $('#modalErrorDataTable').modal('show');
                                         $('#modalTitle').text('Terjadi Kesalahan');
-                                        $('#modalBody').append('<p class="mb-0">Mohon maaf saat ini sedang ada sedikit kendala. Mungkin ini hanya kesalahan sementara, silahkan coba lakukan refresh halaman. Jika hal ini terjadi lagi, silakan untuk menghubungi admin Fakultas.</p>');
+                                        $('#modalBody').append('<p class="mb-0">Mohon maaf saat ini sedang ada sedikit kendala. Mungkin ini hanya kesalahan sementara, silahkan coba lakukan refresh halaman. Jika hal ini terjadi lagi, silakan untuk menghubungi admin.</p>');
                                         if (statusCode == 419) {
                                             $('#modalBody').append('<p class="mt-3">Sesi Anda mungkin telah berakhir sehingga membutuhkan token baru. Silakan untuk melakukan refresh halaman.</p>');
                                         }
