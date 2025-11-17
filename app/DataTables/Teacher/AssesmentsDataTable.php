@@ -88,7 +88,7 @@ class AssesmentsDataTable extends DataTable
     {
         return [
             DataTableHelper::addCheckbox()->width('5%'),
-            Column::make('title')->addClass('table-column-ps-0 text-wrap')->title('Assesment')->width('30%'),
+            Column::computed('title')->addClass('table-column-ps-0 text-wrap')->title('Assesment')->width('30%'),
             Column::computed('variable')->addClass('table-column-ps-0')->title('Variabel')->width('20%'),
             Column::computed('question')->title('Pertanyaan')->width('15%'),
             Column::computed('answer')->title('Jawaban')->width('15%'),
