@@ -469,12 +469,28 @@ class DataTableHelper
         HTML;
     }
 
-    public static function actionButtonAnswer(object $row, string $route) : string {
+    public static function actionButtonAnswer(object $row, string $route, string $storeRoute) : string {
+
+        $storeUrl = $storeRoute;
+        $csrf = csrf_field();
+
         return <<<HTML
             <div class="btn-group" role="group">
-            <a class="btn btn-white btn-sm" href="{$route}">
-              <i class="bi-eye me-1"></i> Detail
-            </a>
+
+                <form action="{$storeRoute}" method="POST" style="display:inline-block;">
+                    {$csrf}
+                    <input type="hidden" name="answer_id" value="">
+                    <input type="hidden" name="assesment_id" value="">
+
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        generate
+                    </button>
+                </form>
+
+                <a class="btn btn-white btn-sm" href="{$route}">
+                    <i class="bi-eye me-1"></i> Detail
+                </a>
+            </div>
         HTML;
     }
 

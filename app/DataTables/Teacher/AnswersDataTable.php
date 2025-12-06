@@ -47,15 +47,15 @@ class AnswersDataTable extends DataTable
                     </a>
                 HTML;  
             })
-            // Perbaikan ada di sini
             ->editColumn('answer', function($row) {
-                $content = strip_tags($row->answer ?? '');
-                $excerpt = strlen($content) > 100 
-                    ? substr($content, 0, 100) . '...' 
-                    : $content;
-                return <<<HTML
-                    <span class="d-block fs-5 text-bold">{$excerpt}</span>
-                HTML;
+                $rawHtml = $row->trixRender('answer');
+                $plain = strip_tags($rawHtml);
+
+                $excerpt = strlen($plain) > 100
+                    ? substr($plain, 0, 100) . '...'
+                    : $plain;
+
+                return "<span class='d-block fs-5 text-bold'>{$excerpt}</span>";
             })
             ->editColumn('analysis', function($row) {
                 return <<<HTML
@@ -70,7 +70,8 @@ class AnswersDataTable extends DataTable
             ->editColumn('action', function($row) {
                 if ($row->assesment_id && $row->id) {
                     $url = route('teacher.answer.show', ['assesment_id' => $row->assesment_id, 'id' => $row->id]);
-                    return DataTableHelper::actionButtonAnswer($row, $url);
+                    $storeRoute = route('teacher.answer.analyze', ['assesment_id' => $row->assesment_id, 'id' => $row->id]);
+                    return DataTableHelper::actionButtonAnswer($row, $url, $storeRoute);
                 }
                 return '';
             })

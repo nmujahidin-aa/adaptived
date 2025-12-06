@@ -65,49 +65,46 @@ class AnswerController extends Controller
 
     public function analyze($assesment_id, $id)
     {
+        $data = Answer::findOrFail($id);
+        $kata = strip_tags($data->trixRender('answer'));
+
+        $apiKey = env('GEMINI_API_KEY');
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key={$apiKey}";
+
         try {
-            $assesment = Assesment::findOrFail($assesment_id);
-            $data = Answer::findOrFail($id);
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('services.ai.token'),
-                'Accept' => 'application/json',
-            ])->post(config('services.ai.endpoint') . '/analyze', [
-                'question' => $assesment->question,
-                'answer'   => $data->answer,
-            ]);
-
-            dd($response->json());
-
-            if ($response->failed()) {
-                throw new \Exception('Gagal menghubungi API AI');
-            }
-
-            $analysisResult = $response->json()['result'] ?? null;
-
-            if (!$analysisResult) {
-                throw new \Exception('Respons API AI tidak valid');
-            }
-
-            // Simpan hasil analisis ke kolom `analysis`
-            $data->analysis = $analysisResult;
-
-            $data->save();
-
-            return redirect()
-                ->route('teacher.answer.show', [
-                    'assesment_id' => $assesment_id,
-                    'id' => $id
+            $response = Http::timeout(20)
+                ->withHeaders([
+                    "Content-Type" => "application/json",
                 ])
-                ->with('success', 'Analisis berhasil disimpan.');
+                ->post($url, [
+                    "contents" => [
+                        [
+                            "parts" => [
+                                ["text" => "Analisa jawaban berikut:\n\n{$kata}"]
+                            ]
+                        ]
+                    ]
+                ]);
+
+            // Kalau gagal dari sisi API (403, 429, 500)
+            if ($response->failed()) {
+
+                $errorMessage = $response->json()['error']['message'] ?? 'Terjadi kesalahan pada layanan AI.';
+
+                return back()->with('error', "Gagal memproses analisis AI: {$errorMessage}");
+            }
+
+            // Ambil output AI
+            $result = $response->json();
+            $output = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'Tidak ada hasil analisis.';
+
+            return view('teacher.answer.analysis', compact('data', 'output'));
 
         } catch (\Exception $e) {
-            return redirect()
-                ->route('teacher.answer.show', [
-                    'assesment_id' => $assesment_id,
-                    'id' => $id
-                ])
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            // Error internal (timeout, jaringan, parsing, dll)
+            return back()->with('error', "Terjadi kesalahan sistem: " . $e->getMessage());
         }
     }
 }
