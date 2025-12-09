@@ -11,6 +11,8 @@ use App\Models\Assesment;
 use Illuminate\Support\Facades\Http;
 use App\Helpers\HttpResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use OpenAI;
 
 class AnswerController extends Controller
 {
@@ -65,46 +67,48 @@ class AnswerController extends Controller
 
     public function analyze($assesment_id, $id)
     {
-        $data = Answer::findOrFail($id);
-        $kata = strip_tags($data->trixRender('answer'));
-
-        $apiKey = env('GEMINI_API_KEY');
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key={$apiKey}";
-
         try {
+            $data = Answer::findOrFail($id);
+            $question = strip_tags($data->question->question);
+            $answer = strip_tags($data->trixRender('answer'));
 
-            $response = Http::timeout(20)
-                ->withHeaders([
-                    "Content-Type" => "application/json",
-                ])
-                ->post($url, [
-                    "contents" => [
-                        [
-                            "parts" => [
-                                ["text" => "Analisa jawaban berikut:\n\n{$kata}"]
-                            ]
-                        ]
+            $client = OpenAI::client(env('OPENAI_API_KEY'));
+            $prompt = "Analisis terstruktur dan objektif.\n\nKonteks:\nPertanyaan: {$question}\nJawaban: {$answer}\n\nInstruksi:\n1. Ringkasan singkat (1 kalimat).\n2. Akurasi/kebenaran: jelaskan tepat/keliru dan beri bukti atau alasan (maks 2 kalimat).\n3. Kelebihan: tampilkan 2 poin bullet.\n4. Kekurangan: tampilkan 2 poin bullet.\n5. Rekomendasi perbaikan singkat (1 kalimat).\n\nPenting:\n- Jangan ajukan pertanyaan, jangan menawarkan varian.\n- Jangan gunakan frasa seperti \"Apakah Anda ingin...\" atau \"Mau saya buatkan...\".\n- Batasi total output hingga ~250 kata. Nada: profesional, jelas.";
+
+            $response = $client->chat()->create([
+                'model' => 'gpt-5-nano',
+                'messages' => [
+                    [
+                        'role' => 'user',
+                        'content' => "{$prompt}"
                     ]
-                ]);
+                ]
+            ]);
 
-            // Kalau gagal dari sisi API (403, 429, 500)
-            if ($response->failed()) {
+            $answer = $response->choices[0]->message->content
+                ?? "Tidak ada hasil dari OpenAI.";
 
-                $errorMessage = $response->json()['error']['message'] ?? 'Terjadi kesalahan pada layanan AI.';
+            $data->analysis = $answer;
+            $data->save();
 
-                return back()->with('error', "Gagal memproses analisis AI: {$errorMessage}");
-            }
-
-            // Ambil output AI
-            $result = $response->json();
-            $output = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'Tidak ada hasil analisis.';
-
-            return view('teacher.answer.analysis', compact('data', 'output'));
+            return response()->json([
+                "status" => "success",
+                "data" => $answer
+            ]);
 
         } catch (\Exception $e) {
 
-            // Error internal (timeout, jaringan, parsing, dll)
-            return back()->with('error', "Terjadi kesalahan sistem: " . $e->getMessage());
+            Log::error("AI Analyze Error", [
+                "error" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "file" => $e->getFile()
+            ]);
+
+            return response()->json([
+                "status" => "error",
+                "message" => "Sistem error",
+                "debug" => $e->getMessage()
+            ], 500);
         }
     }
 }

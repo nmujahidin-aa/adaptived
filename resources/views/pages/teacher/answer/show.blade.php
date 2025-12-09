@@ -58,14 +58,22 @@
                         </div>
                     </div>
                     <div class="rich-text-content pb-3 px-3">
-                        <form action="{{ route('teacher.answer.analyze', ['assesment_id' => $assesment->id, 'id' => $data->id]) }}" method="POST">
-                            @csrf
-                            <div class="text-center">
-                                <button type="submit" id="btnAnalyze" class="btn btn-primary">
-                                    Analisis Jawaban
-                                </button>
+                        @if ($data->analysis)
+                            <div class="alert alert-info">
+                                {!! nl2br(e($data->analysis)) !!}
                             </div>
-                        </form>
+                        @else
+                            <div id="aiResult" class="mt-3"></div>
+
+                            <form action="{{ route('teacher.answer.analyze', ['assesment_id' => $assesment->id, 'id' => $data->id]) }}" method="POST">
+                                @csrf
+                                <div class="text-center">
+                                    <button type="submit" id="btnAnalyze" class="btn btn-primary">
+                                        Analisis Jawaban
+                                    </button>
+                                </div>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -77,18 +85,54 @@
 
 @section('scripts')
 <script>
-    @if(session()->has('alert.assesment.success'))
-        SweetAlert.success('Berhasil', @json(session('alert.assesment.success')));
-    @endif
+document.addEventListener("DOMContentLoaded", function () {
 
-    @if(session()->has('error'))
-        SweetAlert.error('Gagal', @json(session('error')));
-    @endif
-</script>
-<script>
-    document.getElementById('btnAnalyze')?.addEventListener('click', function() {
-        this.disabled = true;
-        this.innerHTML = "<span class='spinner-border spinner-border-sm me-2'></span> Memproses...";
+    const btn = document.getElementById('btnAnalyze');
+    const resultBox = document.getElementById('aiResult');
+
+    btn.addEventListener('click', function (e) {
+        e.preventDefault(); // stop form reload
+
+        btn.disabled = true;
+        btn.innerHTML = "<span class='spinner-border spinner-border-sm me-2'></span> Memproses...";
+
+        fetch("{{ route('teacher.answer.analyze', ['assesment_id' => $assesment->id, 'id' => $data->id]) }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({})
+        })
+        .then(res => res.json())
+        .then(res => {
+
+            btn.disabled = false;
+            btn.innerHTML = "Analisis Jawaban";
+
+            if (res.status === "success") {
+                SweetAlert.success("Berhasil", "Analisis selesai!");
+
+                resultBox.innerHTML = `
+                    <div class="alert alert-info mt-3">
+                        <strong>Hasil Analisis AI:</strong><br><br>
+                        ${res.data.replace(/\n/g, "<br>")}
+                    </div>
+                `;
+            } else {
+                SweetAlert.error("Gagal", res.message);
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = "Analisis Jawaban";
+
+            SweetAlert.error("Error", "Terjadi kesalahan jaringan");
+
+            console.error(err);
+        });
     });
+
+});
 </script>
 @endsection

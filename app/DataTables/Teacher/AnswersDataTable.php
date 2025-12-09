@@ -57,14 +57,24 @@ class AnswersDataTable extends DataTable
 
                 return "<span class='d-block fs-5 text-bold'>{$excerpt}</span>";
             })
-            ->editColumn('analysis', function($row) {
-                return <<<HTML
-                    <span class="d-block fs-5 text-bold">{$row->analysis}</span>
-                HTML;
+            ->editColumn('analysis', function ($row) {
+                if (!$row->analysis) {
+                    return "<em>Belum dianalisis</em>";
+                }
+
+                $rawHtml = $row->analysis;
+                $plain = trim(strip_tags($rawHtml));
+                $excerpt = strlen($plain) > 100
+                    ? substr($plain, 0, 100) . '...'
+                    : $plain;
+
+                $safeExcerpt = e($excerpt);
+
+                return "<span class='d-block fs-5'>{$safeExcerpt}</span>";
             })
             ->editColumn('grade', function($row) {
                 return <<<HTML
-                    <span class="d-block fs-5 text-bold">90</span>
+                    <span class="d-block fs-5 text-bold">-</span>
                 HTML;
             })
             ->editColumn('action', function($row) {
@@ -110,7 +120,7 @@ class AnswersDataTable extends DataTable
             DataTableHelper::addCheckbox()->width('5%'),
             Column::computed('name')->addClass('table-column-ps-0')->title('Siswa')->width('15%'),
             Column::computed('answer')->addClass('table-column-ps text-wrap')->title('Jawaban')->width('30%'),
-            Column::computed('analysis')->addClass('table-column-ps-0')->title('Analisis AI')->width('30%'),
+            Column::computed('analysis')->addClass('table-column-ps-0 text-wrap')->title('Analisis AI')->width('30%'),
             Column::computed('grade')->title('Nilai')->width('12%'),
             Column::computed('action')->title('Aksi')->width('13%'),
         ];
