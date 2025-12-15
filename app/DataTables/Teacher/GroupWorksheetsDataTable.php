@@ -89,7 +89,7 @@ class GroupWorksheetsDataTable extends DataTable
             ->editColumn('action', function($row) {
                 if ($row->worksheet_id && $row->group_id) {
                     $url = route('teacher.worksheet-group-answer.show', ['worksheet_id' => $row->worksheet_id, 'group_id' => $row->group_id]);
-                    return DataTableHelper::actionButtonAnswer($row, $url);
+                    return DataTableHelper::actionButtonGroupAnswerDetail($row, $url);
                 }
                 return '';
             })

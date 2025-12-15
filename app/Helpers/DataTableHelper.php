@@ -469,6 +469,16 @@ class DataTableHelper
         HTML;
     }
 
+    public static function actionButtonGroupAnswerDetail(object $row, string $route): string{
+        return <<<HTML
+            <div class="btn-group" role="group">
+                <a class="btn btn-white btn-sm" href="{$route}">
+                    <i class="bi-eye me-1"></i> Detail
+                </a>
+            </div>
+        HTML;
+    }
+
     public static function actionButtonAnswer(object $row, string $route, string $storeRoute) : string {
 
         $storeUrl = $storeRoute;
