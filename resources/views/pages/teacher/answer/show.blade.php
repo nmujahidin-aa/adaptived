@@ -1,5 +1,7 @@
 @extends('layouts.app')
+
 @section('title', $assesment->title . ' | Adaptived')
+
 @section('styles')
 <style>
     .rich-text-content img {
@@ -12,71 +14,153 @@
         min-height: 400px;
         border-radius: .5rem;
     }
+
+    .typing-cursor::after {
+        content: "▋";
+        animation: blink 1s infinite;
+        margin-left: 2px;
+    }
+
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+    }
 </style>
 @endsection
 
 @section('content')
 <div class="content container-fluid">
-    <div class="d-flex align-items-center mb-3">
-        <a href="{{ route('teacher.answer.index', ['assesment_id' => $assesment->id]) }}" class="btn btn-white">
-            <i class="bi bi-arrow-left"></i>
-        </a>
-        <div class="ms-3">
-            <h3 class="card-header-title">
-                <i class="bi-people me-2"></i>
-                {{ $assesment->title }}
-            </h3>
+
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body">
+
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+
+                {{-- Left --}}
+                <div class="d-flex align-items-center">
+                    <a href="{{ route('teacher.answer.index', ['assesment_id' => $assesment->id]) }}"
+                    class="btn btn-sm btn-white me-3">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+
+                    <div>
+                        <h4 class="mb-0 fw-semibold">
+                            <i class="bi-people me-2 text-primary"></i>
+                            {{ $assesment->title }}
+                        </h4>
+                        <small class="text-muted">
+                            Detail jawaban & analisis siswa
+                        </small>
+                    </div>
+                </div>
+
+                {{-- Right --}}
+                <div class="d-flex align-items-center gap-3">
+
+                    {{-- Progress --}}
+                    @php
+                        $total = $answers->count();
+                        $done  = $answers->whereNotNull('analysis')->count();
+                        $percent = $total ? round(($done / $total) * 100) : 0;
+                    @endphp
+
+                    <div class="text-end" style="min-width:180px;">
+                        <small class="text-muted">
+                            Progress Analisis
+                        </small>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress flex-grow-1" style="height: 6px;">
+                                <div class="progress-bar bg-success"
+                                    role="progressbar"
+                                    style="width: {{ $percent }}%">
+                                </div>
+                            </div>
+                            <span class="badge bg-soft-dark text-dark">
+                                {{ $done }}/{{ $total }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Analyze All --}}
+                    @if($done < $total)
+                    <form id="analyzeAllForm">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ $answers->first()->user_id }}">
+                        <button class="btn btn-sm btn-danger">
+                            <i class="bi-lightning-charge me-1"></i>
+                            Analyze All
+                        </button>
+                    </form>
+                    @else
+                        <span class="badge bg-success">
+                            <i class="bi-check-circle me-1"></i>
+                            Selesai
+                        </span>
+                    @endif
+
+                </div>
+            </div>
+
         </div>
     </div>
 
-    {{-- Konten --}}
     <div class="row">
         <div class="mx-auto">
-            <div class="card shadow-sm border-0">
+
+            @foreach($answers as $data)
+            <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
-                    <div class="alert alert-primary" role="alert">
-                        <div class="flex-shrink-0">
-                            <i class="bi-patch-question-fill"></i> <span class="fw-semibold">Pertanyaan</span>
+
+                    {{-- Pertanyaan --}}
+                    <div class="alert alert-primary">
+                        <strong>Pertanyaan</strong>
+                        <div class="rich-text-content pt-3">
+                            {!! $data->question->question !!}
                         </div>
                     </div>
-                    <div class="rich-text-content pb-3 px-3">  
-                        {!! $data->question->question !!}
-                    </div>
 
-                    <div class="alert alert-soft-success" role="alert">
-                        <div class="flex-shrink-0">
-                            <i class="bi-patch-question-fill"></i> <span class="fw-semibold">Jawaban {{ $data->user->name }}</span>
+                    {{-- Jawaban --}}
+                    <div class="alert alert-soft-success">
+                        <strong>Jawaban {{ $data->user->name }}</strong>
+                        <div class="rich-text-content pt-3 text-dark">
+                            {!! $data->trixRender('answer') !!}
                         </div>
                     </div>
-                    <div class="rich-text-content pb-3 px-3">
-                        {!! $data->trixRender('answer') !!}
-                    </div>
 
-                    <div class="alert alert-dark" role="alert">
-                        <div class="flex-shrink-0">
-                            <i class="bi-patch-question-fill"></i> <span class="fw-semibold">Analisis AI</span>
-                        </div>
-                    </div>
-                    <div class="rich-text-content pb-3 px-3">
-                        @if ($data->analysis)
-                            <div class="alert alert-info">
-                                {!! nl2br(e($data->analysis)) !!}
-                            </div>
-                        @else
-                            <div id="aiResult" class="mt-3"></div>
+                    {{-- Analisis --}}
+                    <div class="alert alert-dark">
+                        <strong>Analisis AI</strong>
 
-                            <form action="{{ route('teacher.answer.analyze', ['assesment_id' => $assesment->id, 'id' => $data->id]) }}" method="POST">
-                                @csrf
-                                <div class="text-center">
-                                    <button type="submit" id="btnAnalyze" class="btn btn-primary">
+                        <div class="mt-3">
+                            @if ($data->analysis)
+                                <div class="py-3">
+                                    {!! nl2br(e($data->analysis)) !!}
+                                </div>
+                            @else
+                                <div id="aiResult-{{ $data->id }}" class="mb-3"></div>
+
+                                <form
+                                    class="analyze-form"
+                                    data-answer-id="{{ $data->id }}"
+                                    action="{{ route('teacher.answer.analyze', [
+                                        'assesment_id' => $assesment->id,
+                                        'id' => $data->id
+                                    ]) }}"
+                                    method="POST"
+                                >
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary btn-sm">
                                         Analisis Jawaban
                                     </button>
-                                </div>
-                            </form>
-                        @endif
+                                </form>
+                            @endif
+                        </div>
                     </div>
+
                 </div>
             </div>
+            @endforeach
+
         </div>
     </div>
 
@@ -85,54 +169,93 @@
 
 @section('scripts')
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+function typeText(el, text, speed = 18) {
+    el.innerHTML = '';
+    el.classList.add('typing-cursor');
 
-    const btn = document.getElementById('btnAnalyze');
-    const resultBox = document.getElementById('aiResult');
+    let i = 0;
+    const interval = setInterval(() => {
+        el.innerHTML += text.charAt(i).replace(/\n/g, '<br>');
+        i++;
+        if (i >= text.length) {
+            clearInterval(interval);
+            el.classList.remove('typing-cursor');
+        }
+    }, speed);
+}
 
-    btn.addEventListener('click', function (e) {
-        e.preventDefault(); // stop form reload
+document.querySelectorAll('.analyze-form').forEach(form => {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const btn = form.querySelector('button');
+        const answerId = form.dataset.answerId;
+        const resultBox = document.getElementById(`aiResult-${answerId}`);
 
         btn.disabled = true;
-        btn.innerHTML = "<span class='spinner-border spinner-border-sm me-2'></span> Memproses...";
+        btn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Menganalisis...
+        `;
 
-        fetch("{{ route('teacher.answer.analyze', ['assesment_id' => $assesment->id, 'id' => $data->id]) }}", {
-            method: "POST",
+        resultBox.innerHTML = `
+            <div class="">
+                <em>AI sedang menulis analisis...</em>
+            </div>
+        `;
+
+        fetch(form.action, {
+            method: 'POST',
             headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({})
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
         })
         .then(res => res.json())
         .then(res => {
-
-            btn.disabled = false;
-            btn.innerHTML = "Analisis Jawaban";
-
-            if (res.status === "success") {
-                SweetAlert.success("Berhasil", "Analisis selesai!");
-
+            if (res.status === 'success') {
                 resultBox.innerHTML = `
-                    <div class="alert alert-info mt-3">
-                        <strong>Hasil Analisis AI:</strong><br><br>
-                        ${res.data.replace(/\n/g, "<br>")}
+                    <div class="">
+                        <div id="typing-${answerId}"></div>
                     </div>
                 `;
+                typeText(
+                    document.getElementById(`typing-${answerId}`),
+                    res.data
+                );
+                btn.remove();
             } else {
-                SweetAlert.error("Gagal", res.message);
+                resultBox.innerHTML = `<div class="alert alert-danger">Gagal</div>`;
             }
         })
-        .catch(err => {
+        .catch(() => {
             btn.disabled = false;
-            btn.innerHTML = "Analisis Jawaban";
-
-            SweetAlert.error("Error", "Terjadi kesalahan jaringan");
-
-            console.error(err);
+            btn.innerHTML = 'Analisis Jawaban';
+            resultBox.innerHTML = `<div class="alert alert-danger">Error jaringan</div>`;
         });
     });
-
 });
+
+const analyzeAllForm = document.getElementById('analyzeAllForm');
+if (analyzeAllForm) {
+    analyzeAllForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const btn = this.querySelector('button');
+        btn.disabled = true;
+        btn.innerHTML = 'Menganalisis semua...';
+
+        fetch("{{ route('teacher.answer.analyze_all', ['assesment_id' => $assesment->id]) }}", {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: this.querySelector('input[name=user_id]').value
+            })
+        })
+        .then(() => location.reload());
+    });
+}
 </script>
 @endsection

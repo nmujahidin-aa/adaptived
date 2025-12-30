@@ -54,14 +54,18 @@ class AnswerController extends Controller
         ]);
     }
 
-    public function show($assesment_id, $id)
+    public function show($assesment_id, $user_id)
     {
         $assesment = Assesment::findOrFail($assesment_id);
-        $data = Answer::findOrFail($id);
+
+        $answers = Answer::with(['question', 'user'])
+            ->where('assesment_id', $assesment_id)
+            ->where('user_id', $user_id)
+            ->get();
 
         return view($this->view . 'show', [
-            'data' => $data,
             'assesment' => $assesment,
+            'answers' => $answers,
         ]);
     }
 
@@ -110,5 +114,40 @@ class AnswerController extends Controller
                 "debug" => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function analyzeAll($assesment_id, Request $request)
+    {
+        $user_id = $request->user_id;
+
+        $answers = Answer::with('question')
+            ->where('assesment_id', $assesment_id)
+            ->where('user_id', $user_id)
+            ->get();
+
+        foreach ($answers as $data) {
+            if ($data->analysis) continue;
+            $question = strip_tags($data->question->question);
+            $answer   = strip_tags($data->trixRender('answer'));
+
+            $prompt = "Analisis singkat dan objektif.\n\nPertanyaan: {$question}\nJawaban: {$answer}";
+
+            $client = OpenAI::client(env('OPENAI_API_KEY'));
+            $response = $client->chat()->create([
+                'model' => 'gpt-5-nano',
+                'messages' => [[
+                    'role' => 'user',
+                    'content' => $prompt
+                ]]
+            ]);
+
+            $data->analysis = $response->choices[0]->message->content ?? null;
+            $data->save();
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Semua jawaban berhasil dianalisis'
+        ]);
     }
 }

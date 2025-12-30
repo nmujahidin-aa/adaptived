@@ -14,6 +14,7 @@ use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use App\Helpers\DataTableHelper;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AssesmentsDataTable extends DataTable
 {
@@ -25,6 +26,9 @@ class AssesmentsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+            ->filterColumn('title', function ($query, $keyword) {
+                $query->where('title', 'like', "%{$keyword}%");
+            })
             ->editColumn('title', function($row) {
                  $url = route('teacher.assesment.edit', $row->id);
                 return <<<HTML
@@ -48,10 +52,16 @@ class AssesmentsDataTable extends DataTable
                 $type = 'Pertanyaan';
                 return DataTableHelper::actionButtonAnalysis($row, $url, $count, $type);
             })
-            ->editColumn('answer', function($row) {
+            ->editColumn('answer', function ($row) {
+                $count = \App\Models\Answer::where('assesment_id', $row->id)
+                    ->whereHas('user', fn ($q) =>
+                        $q->where('school_id', auth()->user()->school_id)
+                    )
+                    ->count(\DB::raw('DISTINCT user_id'));
+
                 $url = route('teacher.answer.index', ['assesment_id' => $row->id]);
-                $count = $row->answers()->count();
-                $type = 'Jawaban';
+                $type = 'Siswa Jawab';
+
                 return DataTableHelper::actionButtonAnalysis($row, $url, $count, $type);
             })
             ->editColumn('action', function($row) {
@@ -88,7 +98,7 @@ class AssesmentsDataTable extends DataTable
     {
         return [
             DataTableHelper::addCheckbox()->width('5%'),
-            Column::computed('title')->addClass('table-column-ps-0 text-wrap')->title('Assesment')->width('30%'),
+            Column::computed('title')->addClass('table-column-ps-0 text-wrap')->title('Assesment')->searchable(true)->width('30%'),
             Column::computed('variable')->addClass('table-column-ps-0')->title('Variabel')->width('20%'),
             Column::computed('question')->title('Pertanyaan')->width('15%'),
             Column::computed('answer')->title('Jawaban')->width('15%'),

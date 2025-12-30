@@ -20,4 +20,9 @@ class GroupAnswer extends Model
     {
         return $this->belongsTo(Instruction::class, 'worksheet_instruction_id');
     }
+
+    public function worksheet()
+    {
+        return $this->belongsTo(Worksheet::class, 'worksheet_id');
+    }
 }

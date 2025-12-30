@@ -12,6 +12,7 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use App\Helpers\DataTableHelper;
+use Illuminate\Support\Facades\DB;
 
 class AnswersDataTable extends DataTable
 {
@@ -28,64 +29,65 @@ class AnswersDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('checkbox', function ($row) {
-                return DataTableHelper::checkbox($row, $row->answer);
-            })
-            ->editColumn('name', function($row) {
-                $url = route('teacher.answer.show', ['assesment_id' => $row->assesment_id, 'id' => $row->id]);
-                return <<<HTML
-                    <a class="d-flex align-items-center" href="{$url}">
-                        <div class="avatar avatar-circle">
-                            <img class="avatar-img" src="{$row->user->getAvatar()}" alt="User Image">
-                        </div>
-                        <div class="ms-3">
-                          <span class="d-block h5 text-bold mb-0" style="text-transform: uppercase;">
-                            {$row->user->name}
-                          </span>
-                          <span class="d-block fs-5 text-body text-dark">{$row->user->email}</span>
-                        </div>
-                    </a>
-                HTML;  
-            })
-            ->editColumn('answer', function($row) {
-                $rawHtml = $row->trixRender('answer');
-                $plain = strip_tags($rawHtml);
+        ->filterColumn('name', function ($query, $keyword) {
+            $query->whereHas('user', function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                ->orWhere('email', 'like', "%{$keyword}%");
+            });
+        })
+        ->editColumn('name', function($row) {
+            $url = route('teacher.answer.show', ['assesment_id' => $row->assesment_id, 'id' => $row->user_id]);
+            return <<<HTML
+                <a class="d-flex align-items-center" href="{$url}">
+                    <div class="avatar avatar-circle">
+                        <img class="avatar-img" src="{$row->user->getAvatar()}" alt="User Image">
+                    </div>
+                    <div class="ms-3">
+                        <span class="d-block h5 text-bold mb-0" style="text-transform: uppercase;">
+                        {$row->user->name}
+                        </span>
+                        <span class="d-block fs-5 text-body text-dark">{$row->user->email}</span>
+                    </div>
+                </a>
+            HTML;  
+        })
+        ->editColumn('status', function ($row) {
+            $total = (int) $row->total_answers;
+            $done  = (int) $row->analyzed_answers;
 
-                $excerpt = strlen($plain) > 100
-                    ? substr($plain, 0, 100) . '...'
-                    : $plain;
+            $percent = $total > 0 ? round(($done / $total) * 100) : 0;
 
-                return "<span class='d-block fs-5 text-bold'>{$excerpt}</span>";
-            })
-            ->editColumn('analysis', function ($row) {
-                if (!$row->analysis) {
-                    return "<em>Belum dianalisis</em>";
-                }
+            $color = match (true) {
+                $percent == 100 => 'bg-success',
+                $percent >= 50   => 'bg-warning',
+                default          => 'bg-danger',
+            };
 
-                $rawHtml = $row->analysis;
-                $plain = trim(strip_tags($rawHtml));
-                $excerpt = strlen($plain) > 100
-                    ? substr($plain, 0, 100) . '...'
-                    : $plain;
-
-                $safeExcerpt = e($excerpt);
-
-                return "<span class='d-block fs-5'>{$safeExcerpt}</span>";
-            })
-            ->editColumn('grade', function($row) {
-                return <<<HTML
-                    <span class="d-block fs-5 text-bold">-</span>
-                HTML;
-            })
-            ->editColumn('action', function($row) {
-                if ($row->assesment_id && $row->id) {
-                    $url = route('teacher.answer.show', ['assesment_id' => $row->assesment_id, 'id' => $row->id]);
-                    $storeRoute = route('teacher.answer.analyze', ['assesment_id' => $row->assesment_id, 'id' => $row->id]);
-                    return DataTableHelper::actionButtonAnswer($row, $url, $storeRoute);
-                }
-                return '';
-            })
-            ->rawColumns(['action', 'name', 'answer','analysis', 'grade','checkbox']);
+            return <<<HTML
+                <div class="mb-1">
+                    <span class="badge bg-soft-dark text-dark">
+                        {$done} / {$total} dianalisis
+                    </span>
+                </div>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar {$color}" role="progressbar"
+                        style="width: {$percent}%"
+                        aria-valuenow="{$percent}" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+            HTML;
+        })
+        ->editColumn('grade', function($row) {
+            return <<<HTML
+                <span class="d-block fs-5 text-bold">-</span>
+            HTML;
+        })
+        ->editColumn('action', function($row) {
+            $route = route('teacher.answer.show', ['assesment_id' => $row->assesment_id, 'id' => $row->user_id]);
+            return DataTableHelper::actionButtonGroupAnswerDetail($row, $route);
+            
+        })
+        ->rawColumns(['name', 'status', 'grade','action']);
     }
 
     /**
@@ -95,11 +97,18 @@ class AnswersDataTable extends DataTable
      */
     public function query(Answer $model): QueryBuilder
     {
-        $data = $model->newQuery()
-            ->with(['user'])
-            ->where('assesment_id', $this->assesment_id);
+        $answer = $model->newQuery()
+            ->select([
+                'user_id',
+                'assesment_id',
+                DB::raw('COUNT(*) as total_answers'),
+                DB::raw('SUM(CASE WHEN analysis IS NOT NULL THEN 1 ELSE 0 END) as analyzed_answers'),
+            ])
+            ->with('user')
+            ->where('assesment_id', $this->assesment_id)
+            ->groupBy('user_id', 'assesment_id');
+        return $answer;
         
-        return $data;
     }
 
     /**
@@ -117,26 +126,18 @@ class AnswersDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            DataTableHelper::addCheckbox()->width('5%'),
-            Column::computed('name')->addClass('table-column-ps-0')->title('Siswa')->width('15%'),
-            Column::computed('answer')->addClass('table-column-ps text-wrap')->title('Jawaban')->width('30%'),
-            Column::computed('analysis')->addClass('table-column-ps-0 text-wrap')->title('Analisis AI')->width('30%'),
+            Column::computed('name')->addClass('table-column')->title('Siswa')->searchable(true)->width('25%'),
+            Column::computed('status')->title('Status')->width('12%'),
             Column::computed('grade')->title('Nilai')->width('12%'),
             Column::computed('action')->title('Aksi')->width('13%'),
         ];
     }
 
-    /**
-     * Get the filename for export.
-     */
     protected function filename(): string
     {
         return 'Answers_' . date('YmdHis');
     }
 
-    /**
-     * Terima parameter dari controller (agar assesment_id tidak null).
-     */
     public function with(array|string $key, mixed $value = null): static
     {
         if (is_array($key)) {
