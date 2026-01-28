@@ -10,6 +10,7 @@ use App\Models\Assesment;
 use App\Models\Worksheet;
 use App\Models\Group;
 use App\Models\GroupAnswer;
+use App\Models\LearningObjective;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -126,6 +127,8 @@ class DashboardController extends Controller
             ->distinct()
             ->count();
 
+            $learningObjective = LearningObjective::where('school_id', $schoolId)->get();
+
             $data = [
                 'students' => $totalStudents,
                 'lkpd' => $totalLKPD,
@@ -142,6 +145,8 @@ class DashboardController extends Controller
 
                 'created_assesments' => $totalAssesments,
                 'analyzed_assesments' => $analyzedAssesments,
+
+                'learning_objectives' => $learningObjective,
             ];
         }
 
@@ -155,6 +160,8 @@ class DashboardController extends Controller
 
             $pendingAssesments = max($totalAssesments - $doneAssesments, 0);
 
+            $learningObjective = LearningObjective::where('school_id', $user->school_id)->get();
+
             $data['total_assesments'] = $totalAssesments;
             $data['pending_assesments'] = $pendingAssesments;
             $data['assesment_progress'] = $totalAssesments > 0
@@ -164,6 +171,7 @@ class DashboardController extends Controller
             $data['total_lkpd'] = $totalAssesments;
             $data['pending_lkpd'] = $pendingAssesments;
             $data['lkpd_progress'] = $data['assesment_progress'];
+            $data['learning_objectives'] = $learningObjective;
         }
 
         return view('pages.dashboard.index', compact('user', 'data'));

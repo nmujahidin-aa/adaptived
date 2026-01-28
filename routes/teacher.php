@@ -11,6 +11,8 @@ use App\Http\Controllers\Teacher\WorksheetController;
 use App\Http\Controllers\Teacher\AnswerController;
 use App\Http\Controllers\Teacher\GroupAnswerController;
 use App\Http\Controllers\Teacher\InstructionController;
+use App\Http\Controllers\Teacher\LearningObjectiveController;
+
 use App\Models\Instruction;
 
 /*
@@ -37,6 +39,7 @@ Route::group(["middleware"=>"auth"], function(){
     RouteHelper::make('learning-resource', LearningResourceController::class, 'learning-resource');
     RouteHelper::make('worksheet', WorksheetController::class, 'worksheet');
     RouteHelper::make('group', GroupController::class, 'group');
+    RouteHelper::make('learning-objective', LearningObjectiveController::class, 'learning-objective');
 
     Route::group(['prefix' => '{worksheet_id}'], function () {
         RouteHelper::make('instruction', InstructionController::class, 'instruction');

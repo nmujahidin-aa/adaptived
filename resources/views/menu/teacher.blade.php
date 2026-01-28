@@ -27,3 +27,9 @@
         <i class="bi-collection-fill dropdown-item-icon"></i> Asesmen
     </a>
 </li>
+
+<li class="nav-item">
+    <a class="nav-link @if(request()->routeIs('teacher.learning-objective*')) active @endif" href="{{ route('teacher.learning-objective.index') }}">
+        <i class="bi-bookmark-star-fill dropdown-item-icon"></i> Tujuan Pembelajaran
+    </a>
+</li>

@@ -41,7 +41,7 @@ class AssesmentsDataTable extends DataTable
                     </a>
                 HTML;  
             })
-            ->editColumn('variable', function($row) {
+            ->editColumn('variable', function($row) {  
                 return <<<HTML
                     <span class="d-block fs-5 text-bold"><i class="bi bi-{$row->variable->icon} text-dark me-1"></i>{$row->variable->name}</span>
                 HTML;

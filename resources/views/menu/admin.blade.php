@@ -21,3 +21,9 @@
         <i class="bi-hospital-fill dropdown-item-icon"></i> Sekolah
     </a>
 </li>
+
+<li class="nav-item">
+    <a class="nav-link @if(request()->routeIs('admin.guide*')) active @endif" href="{{route('admin.guide.index')}}">
+        <i class="bi-dpad-fill dropdown-item-icon"></i> Petunjuk
+    </a>
+</li>

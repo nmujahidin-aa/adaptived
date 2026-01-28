@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SchoolController;
 use App\Http\Controllers\Admin\VariableController;
+use App\Http\Controllers\Admin\GuideController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +31,5 @@ Route::group(["middleware"=>"auth"], function(){
     RouteHelper::make('student', StudentController::class, 'student');
     RouteHelper::make('school', SchoolController::class, 'school');
     RouteHelper::make('variable', VariableController::class, 'variable');
+    RouteHelper::make('guide', GuideController::class, 'guide');
 });

@@ -1,4 +1,10 @@
 <li class="nav-item">
+    <a class="nav-link @if(request()->routeIs('guide.*')) active @endif" href="{{route('guide.index')}}">
+        <i class="bi-dpad-fill dropdown-item-icon"></i> Petunjuk Penggunaan
+    </a>
+</li>
+
+<li class="nav-item">
     <a class="nav-link @if(request()->routeIs('learning-resource.*')) active @endif" href="{{route('learning-resource.index')}}">
         <i class="bi-book-half dropdown-item-icon"></i> Sumber Belajar
     </a>

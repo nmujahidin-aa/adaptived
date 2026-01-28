@@ -122,35 +122,27 @@
                 </div>
             </div>
 
-            {{-- Progress --}}
+            {{-- Tujaun Pembelajaran --}}
             <div class="col-lg-8">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
-                        <h6 class="fw-semibold mb-4">Progress Penyelesaian</h6>
+                        <h6 class="fw-semibold mb-4">Tujuan Pembelajaran</h6>
 
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between">
-                                <small>LKPD Selesai</small>
-                                <small>{{ $data['lkpd_done'] }} / {{ $data['lkpd_total'] }}</small>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar bg-success"
-                                    style="width: {{ $data['lkpd_total'] > 0 ? round($data['lkpd_done']/$data['lkpd_total']*100) : 0 }}%">
+                        @forelse ($data['learning_objectives'] as $objective)
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="fw-semibold text-primary pt-1" style="min-width: 24px">
+                                    {{ $loop->iteration }}.
+                                </span>
+
+                                <div class="flex-grow-3">
+                                    {!! is_array($objective) ? $objective['content'] : $objective->content !!}
                                 </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <div class="d-flex justify-content-between">
-                                <small>Asesmen Selesai</small>
-                                <small>{{ $data['assesment_done'] }} / {{ $data['assesment_total'] }}</small>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar bg-primary"
-                                    style="width: {{ $data['assesment_total'] > 0 ? round($data['assesment_done']/$data['assesment_total']*100) : 0 }}%">
-                                </div>
-                            </div>
-                        </div>
+                        @empty
+                            <p class="text-muted mb-0">
+                                Tidak ada tujuan pembelajaran yang tersedia.
+                            </p>
+                        @endforelse
 
                     </div>
                 </div>
@@ -197,6 +189,31 @@
                     <div class="progress-bar bg-warning"
                         style="width: {{ $data['lkpd_progress'] }}%">
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 mt-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-4">Tujuan Pembelajaran</h6>
+
+                    @forelse ($data['learning_objectives'] as $objective)
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="fw-semibold text-primary pt-1" style="min-width: 24px">
+                                {{ $loop->iteration }}.
+                            </span>
+
+                            <div class="flex-grow-3">
+                                {!! is_array($objective) ? $objective['content'] : $objective->content !!}
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-muted mb-0">
+                            Tidak ada tujuan pembelajaran yang tersedia.
+                        </p>
+                    @endforelse
+
                 </div>
             </div>
         </div>
