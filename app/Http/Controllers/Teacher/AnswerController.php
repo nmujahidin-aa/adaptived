@@ -63,8 +63,8 @@ class AnswerController extends Controller
             $answer = strip_tags($data->trixRender('answer'));
 
             $client = OpenAI::client(env('OPENAI_API_KEY'));
-            $prompt = "Analisis terstruktur dan objektif.\n\nKonteks:\nPertanyaan: {$question}\nJawaban: {$answer}\n\nInstruksi:\n1. Ringkasan singkat (1 kalimat).\n2. Akurasi/kebenaran: jelaskan tepat/keliru dan beri bukti atau alasan (maks 2 kalimat).\n3. Kelebihan: tampilkan 2 poin bullet.\n4. Kekurangan: tampilkan 2 poin bullet.\n5. Rekomendasi perbaikan singkat (1 kalimat).\n\nPenting:\n- Jangan ajukan pertanyaan, jangan menawarkan varian.\n- Jangan gunakan frasa seperti \"Apakah Anda ingin...\" atau \"Mau saya buatkan...\".\n- Batasi total output hingga ~250 kata. Nada: profesional, jelas.";
-
+            $prompt = "Anda adalah penilai akademik profesional. Nilailah jawaban siswa berikut. Pertanyaan: {$question}. Jawaban siswa: {$answer}. Gunakan skala penilaian: Skor 5 = jawaban sangat tepat, lengkap, dan jelas; Skor 4 = jawaban tepat namun kurang rinci; Skor 3 = jawaban sebagian benar; Skor 2 = banyak kesalahan konsep; Skor 1 = tidak sesuai pertanyaan. Instruksi: tentukan satu skor dari 1 sampai 5, jelaskan alasan pemberian skor, sebutkan kelebihan jawaban (maksimal 3 poin), dan sebutkan kekurangan jawaban (maksimal 3 poin). OUTPUT HARUS JSON VALID SAJA tanpa teks tambahan. Format output: {\"skor\": 1-5, \"alasan_skor\": \"...\", \"kelebihan\": [\"...\"], \"kekurangan\": [\"...\"]}.";
+        
             $response = $client->chat()->create([
                 'model' => 'gpt-5-nano',
                 'messages' => [
@@ -101,6 +101,7 @@ class AnswerController extends Controller
             ], 500);
         }
     }
+
 
     public function analyzeAll($assesment_id, Request $request)
     {
