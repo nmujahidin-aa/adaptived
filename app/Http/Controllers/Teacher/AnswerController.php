@@ -28,20 +28,6 @@ class AnswerController extends Controller
         $this->view = "pages.teacher.answer.";
         $this->route = "teacher.answer.";
         $this->analysis = new Answer();
-
-        $this->baseUrl = config('services.byteplus.base_url');
-        $this->apiKey = config('services.byteplus.api_key');
-        $this->model = config('services.byteplus.model');
-        
-        if (empty($this->baseUrl)) {
-            throw new \Exception('BYTEPLUS_BASE_URL is not set in environment variables');
-        }
-        if (empty($this->apiKey)) {
-            throw new \Exception('BYTEPLUS_API_KEY is not set in environment variables');
-        }
-        if (empty($this->model)) {
-            throw new \Exception('ARK_MODEL_NAME is not set in environment variables');
-        }
     }
 
     public function index(AnswersDataTable $dataTable, $assesment_id)

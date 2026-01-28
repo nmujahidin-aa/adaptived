@@ -16,7 +16,13 @@
             <div class="card shadow-sm border-0">                            
                 <div class="card-body">
                     <div class="rich-text-content">
-                        {!! $data->content !!}
+                        @if (!empty($data->content))
+                            {!! $data->content !!}
+                        @else
+                            <p class="text-muted fst-italic mb-0">
+                                Petunjuk belum diinputkan.
+                            </p>
+                        @endif
                     </div>
                 </div>
             </div>
